@@ -1,166 +1,1320 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Con Só May Mắn – Giành Cho Giáo Viênc</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trung Tâm Toán Cô Huyền - Nền Tảng Học Toán Vững Chắc</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
 
-<meta name="description" content="Website quay số lên trả bài dành cho giáo viên, giao diện chủ đề trường học cực đẹp.">
-<meta name="keywords" content="chọn số trả bài, bảng quay số, random học sinh, giáo viên, trường học">
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-
-<style>
-body {
-    font-family: 'Poppins', sans-serif;
-    margin:0;
-    padding:0;
-    background: linear-gradient(135deg, #a8d8ff, #fce1ff);
-    text-align:center;
-    color:#333;
-}
-
-h1 {
-    margin-top: 30px;
-    font-size: 36px;
-    color: #2d2d2d;
-    text-shadow: 1px 1px 3px #fff;
-}
-
-.sub-title {
-    margin-top: -5px;
-    font-size: 16px;
-    color: #444;
-    font-weight: 600;
-}
-
-/* Bảng số ngang, gọn */
-.grid {
-    width: 90%;
-    max-width: 600px;
-    margin: 20px auto;
-    display: grid;
-    grid-template-columns: repeat(10, 1fr);
-    gap: 8px;
-}
-
-.number {
-    background: #ffffffdd;
-    padding: 12px 0;
-    font-size: 18px;
-    font-weight: bold;
-    border-radius: 10px;
-    cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-    transition: 0.25s;
-}
-
-.number:hover {
-    background: #ffe8a6;
-    transform: scale(1.12);
-}
-
-/* Nút chọn số */
-button {
-    margin-top: 15px;
-    padding: 12px 30px;
-    font-size: 20px;
-    font-weight: bold;
-    background: linear-gradient(135deg, #ff9800, #ffca28);
-    color: white;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-    transition: 0.3s;
-}
-
-button:hover {
-    transform: scale(1.08);
-    box-shadow: 0 6px 18px rgba(0,0,0,0.35);
-}
-
-/* Kết quả */
-.result-box {
-    margin-top: 20px;
-    font-size: 24px;
-    font-weight: bold;
-    color: #d32f2f;
-    text-shadow: 1px 1px 3px #fff;
-}
-
-/* Footer */
-.footer {
-    margin-top: 30px;
-    font-size: 16px;
-    color: #333;
-    padding-bottom: 20px;
-    font-weight: 600;
-}
-</style>
-</head>
-<body>
-
-<h1>Con Số May Mắn 📚🎓</h1>
-<div class="sub-title">Chúc Mấy Bạn , Và Cô Có Một Ngày Giảng Dạy , Và Học Tập Đầy Năng Lượng!
-</div>
-
-<!-- Bảng số -->
-<div class="grid" id="numberGrid"></div>
-
-<!-- Nút chọn số -->
-<button onclick="rollNumber()">🎲 Chọn Số Ngẫu Nhiên</button>
-
-<!-- Kết quả -->
-<div class="result-box" id="result">Số được chọn sẽ hiển thị ở đây</div>
-
-<!-- Tiếng vỗ tay -->
-<audio id="clapSound">
-    <source src="https://www.soundjay.com/human/applause-8.mp3" type="audio/mpeg">
-</audio>
-
-<script>
-// Render số 1-100
-const grid = document.getElementById('numberGrid');
-for(let i=1;i<=100;i++){
-    const div = document.createElement('div');
-    div.className = 'number';
-    div.textContent = i;
-    grid.appendChild(div);
-}
-
-// Chọn số ngẫu nhiên
-function rollNumber(){
-    const numbers = document.querySelectorAll('.number');
-    const resultBox = document.getElementById('result');
-    const clap = document.getElementById("clapSound");
-
-    let count = 0;
-    let interval = setInterval(()=>{
-        numbers.forEach(n=>n.style.background='#ffffffdd');
-        let tempNum = Math.floor(Math.random()*100);
-        numbers[tempNum].style.background='#ffe8a6';
-        resultBox.textContent = "Đang chọn... 👉 " + (tempNum+1);
-        clap.currentTime = 0; // chạy lại từ đầu
-        clap.play();
-        count++;
-        if(count>25){ // chạy khoảng 25 lần rồi dừng
-            clearInterval(interval);
-            let finalNum = Math.floor(Math.random()*100);
-            numbers.forEach(n=>n.style.background='#ffffffdd');
-            numbers[finalNum].style.background='#ffeb3b';
-            resultBox.innerHTML = "🎉 Cô mời số <b>" + (finalNum+1) + "</b> lên bảng trả bài! 🎉";
-            clap.currentTime = 0;
-            clap.play(); // tiếng vỗ tay cuối
+    <script>
+        // Cấu hình Tailwind CSS với bảng màu và font hiện đại
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-blue': '#1a56db', // Xanh đậm, mạnh mẽ (Hơi thay đổi so với bản cũ để hiện đại hơn)
+                        'secondary-orange': '#f59e0b', // Cam rực rỡ, màu nhấn
+                        'light-bg': '#f9fafb', // Nền sáng
+                        'accent-green': '#10b981', // Màu xanh lá cây cho success
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
         }
-    },70);
-}
-</script>
+    </script>
+    <style>
+        /* Base styles */
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        /* Nút chính: Xanh - bóng bẩy */
+        .btn-primary { @apply bg-primary-blue text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:bg-blue-700 transition duration-300 transform hover:-translate-y-0.5; }
+        /* Nút phụ: Cam - nhấn mạnh */
+        .btn-secondary { @apply bg-secondary-orange text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:bg-amber-600 transition duration-300 transform hover:-translate-y-0.5; }
+        /* Card: Thiết kế mềm mại hơn */
+        .card { @apply bg-white p-6 md:p-8 rounded-3xl shadow-2xl border border-gray-100; }
+        /* Input Field: Đẹp hơn */
+        .input-field { @apply w-full p-3 border-2 border-gray-200 rounded-xl mt-1 focus:outline-none focus:border-primary-blue focus:ring-4 focus:ring-primary-blue/20 transition duration-200; }
+        .nav-item { @apply cursor-pointer p-2 hover:text-secondary-orange transition duration-200 font-medium; }
+        .nav-item.active { @apply text-secondary-orange font-bold border-b-3 border-secondary-orange; }
+        
+        /* Modal Backdrop */
+        .modal-backdrop {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.7); z-index: 1000;
+            display: flex; justify-content: center; align-items: center;
+        }
 
-<!-- Footer -->
-<div class="footer">
-   
-</div>
+        /* Responsive Table */
+        .responsive-table {
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100%;
+        }
+        .responsive-table th, .responsive-table td {
+            padding: 14px; /* Tăng padding */
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .responsive-table th {
+            background-color: #eef2ff; /* Màu nền xanh nhạt */
+            text-align: left;
+            font-weight: bold;
+            color: #1a56db; /* Màu chữ xanh đậm */
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+        .responsive-table tr:last-child td {
+            border-bottom: none;
+        }
+        .responsive-table tbody tr:hover {
+            background-color: #f5f8ff; /* Hiệu ứng hover nhẹ */
+        }
 
+        /* Hero Image placeholder - Thêm cho phần giới thiệu */
+        .hero-img {
+            background-image: url('https://picsum.photos/800/600?random=1'); /* Placeholder image */
+            background-size: cover;
+            background-position: center;
+            min-height: 450px;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <nav class="bg-white shadow-xl sticky top-0 z-50">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-3 cursor-pointer group" onclick="app.renderHome()">
+                    <i class="fas fa-brain text-4xl text-primary-blue group-hover:scale-110 transition duration-300"></i>
+                    <div>
+                        <h1 class="text-2xl font-extrabold text-primary-blue">CÔ HUYỀN MATH</h1>
+                        <p class="text-xs text-secondary-orange font-semibold">Nền tảng tri thức vững chắc</p>
+                    </div>
+                </div>
+                
+                <div id="navLinks" class="hidden md:flex space-x-6 text-gray-600">
+                    </div>
+
+                <div id="authButtons">
+                    </div>
+            </div>
+        </div>
+    </nav>
+
+    <div id="mainContent" class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 min-h-screen">
+        </div>
+
+    <div id="modalContainer"></div>
+
+    <footer class="bg-primary-blue text-white py-10 mt-16 shadow-inner">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="flex flex-col md:flex-row justify-center items-center md:space-x-8">
+                <p class="font-bold text-xl mb-2 md:mb-0">TRUNG TÂM TOÁN CÔ HUYỀN</p>
+                <div class="h-6 w-0.5 bg-blue-300 hidden md:block"></div>
+                <p class="text-sm">Liên hệ: <span class="font-semibold">0912.XXX.XXX</span> | Email: <span class="font-semibold">côhuyenmath@edu.vn</span></p>
+            </div>
+            <p class="mt-4 text-xs opacity-70">© 2024 Math Center. Phát triển bởi trí tuệ nhân tạo. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // --- DATA & CONFIG (Giữ nguyên) ---
+        const CONSTANTS = {
+            FEE_PER_SESSION: 90000, 
+            SESSIONS_PER_COURSE: 12, 
+            CLASSES: []
+        };
+        for (let i = 4; i <= 9; i++) {
+            for (let j = 1; j <= 3; j++) {
+                CONSTANTS.CLASSES.push(`${i}.${j}`);
+            }
+        }
+        // Giả lập dữ liệu giáo viên demo (tùy chỉnh nếu cần)
+        const TEACHER_INFO = {
+            name: 'Cô Huyền',
+            experience: '15 năm kinh nghiệm giảng dạy Toán, chuyên luyện thi chuyển cấp.',
+            philosophy: 'Học Toán không chỉ là giải bài tập, mà là phát triển tư duy logic và khả năng giải quyết vấn đề.',
+            image: 'https://picsum.photos/200/200?random=2' // Placeholder image
+        };
+
+
+        // --- LOCAL STORAGE & DATA MANAGEMENT (Giữ nguyên) ---
+        const db = {
+            get(key) { 
+                try {
+                    return JSON.parse(localStorage.getItem(key)) || []; 
+                } catch(e) {
+                    console.error("Lỗi đọc LocalStorage cho key:", key, e);
+                    return [];
+                }
+            },
+            set(key, value) { 
+                try {
+                    localStorage.setItem(key, JSON.stringify(value)); 
+                } catch(e) {
+                    console.error("Lỗi ghi LocalStorage cho key:", key, e);
+                }
+            },
+            init() {
+                let users = this.get('users');
+                const hasAdmin = users.some(u => u.username === 'admin');
+
+                if (!hasAdmin) {
+                    users.push({
+                        id: 'admin',
+                        name: 'Cô Huyền (Admin)',
+                        role: 'teacher',
+                        username: 'admin',
+                        password: '123'
+                    });
+                    this.set('users', users);
+                }
+
+                if (!localStorage.getItem('attendance')) this.set('attendance', {});
+                if (!localStorage.getItem('fees')) this.set('fees', {});
+                if (!localStorage.getItem('assignments')) this.set('assignments', []);
+                if (!localStorage.getItem('materials')) this.set('materials', []);
+                if (!localStorage.getItem('schedule')) this.set('schedule', []);
+            }
+        };
+
+        let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+        let currentClassView = currentUser?.classId || CONSTANTS.CLASSES[0];
+
+        // --- AUTH LOGIC (Giữ nguyên) ---
+        const auth = {
+            login(username, password) {
+                const users = db.get('users');
+                const user = users.find(u => (u.username === username || u.phone === username) && u.password === password);
+                if (user) {
+                    currentUser = user;
+                    localStorage.setItem('currentUser', JSON.stringify(user));
+                    currentClassView = user.classId || CONSTANTS.CLASSES[0]; 
+                    app.init();
+                    return true;
+                }
+                return false;
+            },
+            register(name, phone, password, role, classId) {
+                const users = db.get('users');
+                if (users.find(u => u.phone === phone)) return false; 
+
+                const newUser = {
+                    id: Date.now().toString(),
+                    name,
+                    phone,
+                    password,
+                    role,
+                    classId 
+                };
+                users.push(newUser);
+                db.set('users', users);
+                return true;
+            },
+            logout() {
+                currentUser = null;
+                localStorage.removeItem('currentUser');
+                app.renderLandingPage(); // Quay về trang giới thiệu
+                app.renderNavbar(); 
+            }
+        };
+
+        // --- APP UI LOGIC (Views) ---
+        const app = {
+            init() {
+                db.init();
+                this.renderNavbar();
+                if (currentUser) {
+                    this.renderDashboard();
+                } else {
+                    this.renderLandingPage();
+                }
+            },
+
+            getRoleName(role) {
+                if(role === 'teacher') return 'Giáo Viên';
+                if(role === 'student') return 'Học Sinh';
+                if(role === 'parent') return 'Phụ Huynh';
+                return '';
+            },
+
+            renderNavbar() {
+                const navLinks = document.getElementById('navLinks');
+                const authBtns = document.getElementById('authButtons');
+                
+                if (currentUser) {
+                    let linksHtml = `
+                        <span class="nav-item" data-page="dashboard" onclick="app.renderDashboard()">Dashboard</span>
+                        <span class="nav-item" data-page="schedule" onclick="app.renderSchedule()">Lịch Học</span>
+                        <span class="nav-item" data-page="materials" onclick="app.renderMaterials()">Tài Liệu</span>
+                    `;
+                    
+                    if (currentUser.role === 'teacher') {
+                        linksHtml += `
+                            <span class="nav-item" data-page="class" onclick="app.renderClassManagement()">Lớp & HS</span>
+                            <span class="nav-item" data-page="attendance" onclick="app.renderAttendance()">Điểm Danh</span>
+                            <span class="nav-item" data-page="fees" onclick="app.renderFees()">Học Phí</span>
+                            <span class="nav-item" data-page="homework" onclick="app.renderHomework()">Bài Tập</span>
+                        `;
+                    } else if (currentUser.role === 'student') {
+                        linksHtml += `
+                            <span class="nav-item" data-page="student-homework" onclick="app.renderStudentHomework()">Làm Bài</span>
+                        `;
+                    } else if (currentUser.role === 'parent') {
+                        linksHtml += `
+                            <span class="nav-item" data-page="fees" onclick="app.renderFees()">Học Phí Con</span>
+                        `;
+                    }
+
+                    navLinks.innerHTML = linksHtml;
+                    authBtns.innerHTML = `
+                        <div class="flex items-center gap-4">
+                            <span class="text-sm font-semibold text-primary-blue hidden lg:block">
+                                <i class="fas fa-user-circle mr-1"></i> ${currentUser.name} (${this.getRoleName(currentUser.role)})
+                            </span>
+                            <button onclick="auth.logout()" class="text-red-600 hover:text-red-800 font-bold text-sm p-2 rounded-lg bg-red-50 hover:bg-red-100 transition shadow-md">
+                                <i class="fas fa-sign-out-alt mr-1"></i> Đăng xuất
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    navLinks.innerHTML = `<span class="nav-item active" data-page="landing" onclick="app.renderLandingPage()">Giới Thiệu</span>`;
+                    authBtns.innerHTML = `<button onclick="app.renderLogin()" class="btn-primary text-sm !py-2 !px-4">ĐĂNG NHẬP <i class="fas fa-arrow-right ml-1"></i></button>`;
+                }
+            },
+
+            setActiveNav(page) {
+                document.querySelectorAll('#navLinks .nav-item').forEach(el => {
+                    el.classList.remove('active');
+                    if(el.dataset.page === page) {
+                        el.classList.add('active');
+                    }
+                });
+            },
+
+            // --- NÂNG CẤP TRANG CHỦ (LANDING PAGE) ---
+            renderLandingPage() {
+                this.setActiveNav('landing');
+                document.getElementById('mainContent').innerHTML = `
+                    <header class="bg-primary-blue rounded-3xl p-8 md:p-16 text-white mb-16 shadow-2xl flex flex-col md:flex-row items-center justify-between">
+                        <div class="md:w-3/5">
+                            <h1 class="text-5xl md:text-7xl font-extrabold mb-4 leading-tight">Nền Tảng Toán <br><span class="text-secondary-orange">Vững Chắc</span> Cùng Cô Huyền</h1>
+                            <p class="text-xl opacity-90 mb-8">Chương trình bồi dưỡng chuyên sâu từ lớp 4 đến lớp 9, giúp học sinh phát triển tư duy logic và đạt kết quả cao nhất.</p>
+                            <div class="space-x-4">
+                                <button onclick="app.renderRegister()" class="btn-secondary !py-4 !px-8 !text-lg !font-bold">Đăng Ký Học Thử Ngay <i class="fas fa-arrow-circle-right ml-2"></i></button>
+                                <button onclick="app.renderLogin()" class="bg-white text-primary-blue py-4 px-8 rounded-xl font-bold hover:bg-gray-100 transition shadow-lg">Đăng Nhập Hệ Thống</button>
+                            </div>
+                        </div>
+                        <div class="md:w-2/5 mt-10 md:mt-0 flex justify-center">
+                            <i class="fas fa-calculator text-[10rem] opacity-30"></i>
+                        </div>
+                    </header>
+
+                    <section class="mb-16">
+                        <div class="card grid grid-cols-1 lg:grid-cols-3 gap-8 items-center bg-light-bg">
+                            <div class="lg:col-span-2">
+                                <h2 class="text-4xl font-extrabold text-secondary-orange mb-4"><i class="fas fa-chalkboard-teacher mr-2"></i>Về Giáo Viên: ${TEACHER_INFO.name}</h2>
+                                <p class="text-gray-700 text-lg mb-4">${TEACHER_INFO.experience}</p>
+                                <blockquote class="border-l-4 border-primary-blue pl-4 italic text-gray-600 font-medium">
+                                    "${TEACHER_INFO.philosophy}"
+                                </blockquote>
+                                <div class="mt-6">
+                                    <span class="text-primary-blue font-bold text-lg"><i class="fas fa-star text-secondary-orange mr-1"></i> Phương Pháp Độc Quyền</span>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-1 flex justify-center">
+                                <img src="${TEACHER_INFO.image}" alt="Hình ảnh Cô Huyền" class="w-48 h-48 rounded-full object-cover shadow-2xl border-4 border-white transform hover:scale-105 transition duration-500">
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="mb-16">
+                        <h2 class="text-center text-4xl font-extrabold text-primary-blue mb-12">Tại Sao Chọn Cô Huyền Math?</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            <div class="card text-center transition duration-300 hover:shadow-primary-blue/30 hover:shadow-2xl">
+                                <i class="fas fa-user-check text-5xl text-accent-green mb-4"></i>
+                                <h3 class="text-xl font-bold mb-2">Quản Lý Chuyên Cần</h3>
+                                <p class="text-gray-600">Hệ thống theo dõi điểm danh, học phí và bài tập trực tuyến, minh bạch.</p>
+                            </div>
+                            <div class="card text-center transition duration-300 hover:shadow-primary-blue/30 hover:shadow-2xl">
+                                <i class="fas fa-book-reader text-5xl text-secondary-orange mb-4"></i>
+                                <h3 class="text-xl font-bold mb-2">Kho Tài Liệu Số</h3>
+                                <p class="text-gray-600">Tài liệu, đề thi, chuyên đề được cập nhật thường xuyên, truy cập mọi lúc.</p>
+                            </div>
+                            <div class="card text-center transition duration-300 hover:shadow-primary-blue/30 hover:shadow-2xl">
+                                <i class="fas fa-layer-group text-5xl text-primary-blue mb-4"></i>
+                                <h3 class="text-xl font-bold mb-2">Lộ Trình Cá Nhân Hóa</h3>
+                                <p class="text-gray-600">Phân loại lớp học nhỏ từ 4.1 đến 9.3, đảm bảo phù hợp với trình độ từng học sinh.</p>
+                            </div>
+                        </div>
+                    </section>
+                `;
+            },
+            
+            // Trang Home cho User đã login -> Dashboard
+            renderDashboard() {
+                this.setActiveNav('dashboard');
+                const roleName = this.getRoleName(currentUser.role);
+                const isTeacher = currentUser.role === 'teacher';
+
+                const heroSection = `
+                    <div class="bg-gradient-to-r from-primary-blue to-blue-500 rounded-3xl p-8 md:p-12 text-white mb-10 shadow-2xl flex flex-col md:flex-row items-center justify-between">
+                        <div class="md:w-2/3">
+                            <h2 class="text-xl font-medium mb-2">Xin chào, ${currentUser.name}!</h2>
+                            <h1 class="text-4xl md:text-5xl font-extrabold mb-4">Dashboard ${roleName}</h1>
+                            <p class="text-lg mb-6 opacity-90">Theo dõi thông tin và quản lý học tập/giảng dạy một cách trực quan.</p>
+                            ${isTeacher ? '<button class="bg-white text-primary-blue px-6 py-3 rounded-full font-bold shadow-lg hover:bg-gray-100" onclick="app.renderFees()"><i class="fas fa-chart-line mr-2"></i>Xem Tổng Quan Doanh Thu</button>' : ''}
+                            ${currentUser.role === 'student' ? '<button class="btn-secondary !bg-secondary-orange !px-6 !py-3 !text-lg" onclick="app.renderStudentHomework()"><i class="fas fa-pencil-alt mr-2"></i>Bắt Đầu Học Tập</button>' : ''}
+                        </div>
+                        <div class="md:w-1/3 mt-8 md:mt-0 flex justify-center">
+                            <i class="fas fa-graduation-cap text-9xl opacity-30"></i>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('mainContent').innerHTML = heroSection;
+            },
+
+            // --- NÂNG CẤP FORM ĐĂNG NHẬP/ĐĂNG KÝ ---
+
+            renderLogin() {
+                this.setActiveNav(null);
+                document.getElementById('mainContent').innerHTML = `
+                    <div class="max-w-md mx-auto card mt-12 p-8 shadow-3xl border-t-8 border-primary-blue">
+                        <div class="text-center mb-8">
+                            <i class="fas fa-lock text-5xl text-primary-blue mb-3 animate-bounce-slow"></i>
+                            <h2 class="text-3xl font-bold text-primary-blue">Đăng Nhập Hệ Thống</h2>
+                            <p class="text-gray-500 text-sm mt-2">Truy cập Dashboard của bạn một cách an toàn.</p>
+                        </div>
+                        
+                        <div id="loginForm" class="space-y-6">
+                            <div>
+                                <label class="block text-gray-700 text-sm font-bold mb-1"><i class="fas fa-user-alt mr-1 text-secondary-orange"></i> Tài khoản / SĐT</label>
+                                <input id="loginUser" type="text" class="input-field" placeholder="admin hoặc 0912xxxxxx">
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 text-sm font-bold mb-1"><i class="fas fa-key mr-1 text-secondary-orange"></i> Mật khẩu</label>
+                                <input id="loginPass" type="password" class="input-field" placeholder="******">
+                            </div>
+                            <p id="loginError" class="text-red-600 text-sm font-semibold hidden p-3 bg-red-100 rounded-xl border border-red-300"><i class="fas fa-times-circle mr-1"></i> Sai tài khoản hoặc mật khẩu!</p>
+                            <button onclick="handleLogin()" class="w-full btn-primary !py-4 text-lg">ĐĂNG NHẬP</button>
+                            <p class="text-center text-sm pt-2">Chưa có tài khoản? <a href="#" onclick="app.renderRegister()" class="text-secondary-orange font-bold hover:underline transition">Đăng ký ngay</a></p>
+                        </div>
+                    </div>
+                    <div class="mt-8 text-center text-gray-500 text-sm">
+                        <p>Tài khoản Giáo viên Demo: <b>admin</b> / <b>123</b></p>
+                    </div>
+                `;
+            },
+
+            renderRegister() {
+                this.setActiveNav(null);
+                const classOptions = CONSTANTS.CLASSES.map(c => `<option value="${c}">Lớp ${c}</option>`).join('');
+                document.getElementById('mainContent').innerHTML = `
+                    <div class="max-w-lg mx-auto card mt-8 p-8 shadow-3xl border-t-8 border-secondary-orange">
+                        <div class="text-center mb-8">
+                            <i class="fas fa-user-plus text-5xl text-secondary-orange mb-3"></i>
+                            <h2 class="text-3xl font-bold text-secondary-orange">Tạo Tài Khoản Mới</h2>
+                            <p class="text-gray-500 text-sm mt-2">Đăng ký cho Học sinh hoặc Phụ huynh.</p>
+                        </div>
+                        
+                        <div id="registerForm" class="space-y-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-gray-700 text-sm font-bold mb-1"><i class="fas fa-hands-helping mr-1"></i> Bạn là?</label>
+                                    <select id="regRole" class="input-field" onchange="toggleParentLabel()">
+                                        <option value="student">Học Sinh</option>
+                                        <option value="parent">Phụ Huynh</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label id="classLabel" class="block text-gray-700 text-sm font-bold mb-1"><i class="fas fa-layer-group mr-1"></i> Chọn Lớp Đăng Ký</label>
+                                    <select id="regClass" class="input-field">
+                                        ${classOptions}
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 text-sm font-bold mb-1"><i class="fas fa-signature mr-1"></i> Họ và Tên</label>
+                                <input id="regName" type="text" class="input-field" placeholder="Nguyễn Văn A">
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 text-sm font-bold mb-1"><i class="fas fa-phone mr-1"></i> Số Điện Thoại (Dùng để đăng nhập)</label>
+                                <input id="regPhone" type="text" class="input-field" placeholder="0912345678">
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 text-sm font-bold mb-1"><i class="fas fa-lock mr-1"></i> Mật khẩu</label>
+                                <input id="regPass" type="password" class="input-field">
+                            </div>
+                            <p id="registerError" class="text-red-600 text-sm font-semibold hidden p-3 bg-red-100 rounded-xl border border-red-300"><i class="fas fa-times-circle mr-1"></i> Lỗi đăng ký.</p>
+                            <button onclick="handleRegister()" class="w-full btn-secondary !py-4 mt-6 text-lg">ĐĂNG KÝ</button>
+                            <p class="text-center text-sm pt-2">Đã có tài khoản? <a href="#" onclick="app.renderLogin()" class="text-primary-blue font-bold hover:underline transition">Đăng nhập</a></p>
+                        </div>
+                    </div>
+                `;
+            },
+
+            // --- CÁC TRANG CHỨC NĂNG (Giữ nguyên logic/tối ưu giao diện) ---
+
+            renderClassManagement() {
+                // Giữ nguyên logic, có thể tối ưu thêm CSS/HTML nếu cần
+                this.setActiveNav('class');
+                if(currentUser.role !== 'teacher') return;
+                
+                const users = db.get('users');
+                const students = users.filter(u => u.role === 'student');
+                
+                let classHtml = '';
+                CONSTANTS.CLASSES.forEach(cls => {
+                    const classStudents = students.filter(s => s.classId === cls);
+                    if(classStudents.length > 0) {
+                        const classParents = users.filter(u => u.role === 'parent' && u.classId === cls);
+                        const members = [...classStudents, ...classParents].sort((a,b) => a.name.localeCompare(b.name, 'vi'));
+
+                        classHtml += `
+                            <div class="card my-8 bg-white border-l-4 border-secondary-orange shadow-lg">
+                                <div class="flex justify-between items-center pb-4 mb-4 border-b-2 border-secondary-orange/30">
+                                    <h3 class="text-2xl font-extrabold text-primary-blue">Lớp ${cls}</h3>
+                                    <span class="text-base font-semibold text-white bg-secondary-orange px-4 py-1 rounded-full shadow-md">${members.length} thành viên</span>
+                                </div>
+                                <div class="overflow-x-auto rounded-xl shadow-inner border border-gray-100">
+                                    <table class="responsive-table">
+                                        <thead>
+                                            <tr>
+                                                <th class="w-16">STT</th>
+                                                <th class="min-w-[150px]">Họ Tên</th>
+                                                <th class="w-32">SĐT</th>
+                                                <th class="w-24 text-center">Vai Trò</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            ${members.map((m, index) => {
+                                                const isStudent = m.role === 'student';
+                                                return `
+                                                    <tr class="${isStudent ? '' : 'bg-blue-50'}">
+                                                        <td>${index + 1}</td>
+                                                        <td class="font-bold text-gray-900">${m.name}</td>
+                                                        <td class="text-sm text-gray-600">${m.phone}</td>
+                                                        <td class="text-center font-bold text-xs p-1 rounded-full ${isStudent ? 'text-accent-green bg-green-100' : 'text-secondary-orange bg-amber-100'}">${this.getRoleName(m.role)}</td>
+                                                    </tr>
+                                                `;
+                                            }).join('')}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+
+                document.getElementById('mainContent').innerHTML = `
+                    <h2 class="text-4xl font-extrabold text-primary-blue mb-10 border-b-4 pb-2 border-primary-blue/20">Quản Lý Lớp Học & Thành Viên</h2>
+                    ${classHtml || '<p class="text-center text-gray-500 card">Chưa có học sinh nào đăng ký.</p>'}
+                `;
+            },
+            
+            renderAttendance() {
+                // Giữ nguyên logic, tối ưu giao diện
+                this.setActiveNav('attendance');
+                if(currentUser.role !== 'teacher') return;
+                
+                const today = new Date().toISOString().split('T')[0];
+                const classOptions = CONSTANTS.CLASSES.map(c => `<option value="${c}" ${c === currentClassView ? 'selected' : ''}>Lớp ${c}</option>`).join('');
+
+                document.getElementById('mainContent').innerHTML = `
+                    <div class="card shadow-2xl border-t-4 border-secondary-orange">
+                        <h2 class="text-4xl font-extrabold text-primary-blue mb-8">Điểm Danh Học Sinh</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 p-5 bg-light-bg rounded-xl mb-6 shadow-inner border border-gray-200">
+                            <div class="col-span-1">
+                                <label class="block text-sm font-bold mb-1 text-gray-700">Chọn Lớp</label>
+                                <select id="attClass" class="input-field !p-2" onchange="app.updateClassView(this.value, 'attendance')">
+                                    ${classOptions}
+                                </select>
+                            </div>
+                            <div class="col-span-1">
+                                <label class="block text-sm font-bold mb-1 text-gray-700">Ngày</label>
+                                <input type="date" id="attDate" class="input-field !p-2" value="${today}" onchange="loadAttendanceSheet()">
+                            </div>
+                            <div class="col-span-2 flex items-end justify-end">
+                                <button onclick="loadAttendanceSheet()" class="btn-primary !w-full sm:!w-auto !py-2"><i class="fas fa-list-check mr-2"></i>Tải Danh Sách</button>
+                            </div>
+                        </div>
+                        <div id="attendanceSheet" class="min-h-[300px] flex items-center justify-center border rounded-xl p-4 bg-white">
+                            <p class="text-center text-gray-500 p-4"><i class="fas fa-info-circle mr-2"></i>Chọn Lớp và Ngày để bắt đầu điểm danh.</p>
+                        </div>
+                    </div>
+                `;
+                loadAttendanceSheet(); // Tải mặc định khi vào trang
+            },
+
+            renderFees() {
+                // Giữ nguyên logic, tối ưu giao diện
+                this.setActiveNav('fees');
+                const isTeacher = currentUser.role === 'teacher';
+                const users = db.get('users');
+                const fees = db.get('fees');
+                let content = '';
+
+                if (isTeacher) {
+                    const students = users.filter(u => u.role === 'student');
+                    
+                    const rows = students.map((s, index) => {
+                        const sFee = fees[s.id] || { paidCount: 0 };
+                        const paidAmount = sFee.paidCount * CONSTANTS.FEE_PER_SESSION;
+
+                        let checks = '';
+                        for(let i=1; i<=CONSTANTS.SESSIONS_PER_COURSE; i++) {
+                            const isPaid = i <= sFee.paidCount;
+                            checks += `<div 
+                                class="w-9 h-9 border-2 rounded-full cursor-pointer flex items-center justify-center mr-1 text-sm font-bold transition duration-150 ${isPaid ? 'bg-accent-green text-white border-green-800 shadow-md' : 'bg-gray-100 border-gray-300 text-gray-500 hover:bg-gray-200'}"
+                                onclick="toggleFee('${s.id}', ${i})"
+                                title="Buổi ${i}: ${CONSTANTS.FEE_PER_SESSION.toLocaleString()}đ"
+                            >${i}</div>`;
+                        }
+
+                        return `
+                            <tr class="border-b hover:bg-blue-50">
+                                <td class="text-center">${index+1}</td>
+                                <td class="font-bold text-primary-blue">${s.name} <span class="text-xs text-gray-500 block font-normal">Lớp ${s.classId}</span></td>
+                                <td class="min-w-[350px]">
+                                    <div class="flex flex-wrap">${checks}</div>
+                                </td>
+                                <td class="font-bold text-right">
+                                    <span class="bg-accent-green/10 text-accent-green px-3 py-1 rounded-full font-extrabold">${paidAmount.toLocaleString()}đ</span>
+                                </td>
+                                <td class="text-center font-bold text-secondary-orange">${sFee.paidCount}/${CONSTANTS.SESSIONS_PER_COURSE}</td>
+                            </tr>
+                        `;
+                    }).join('');
+
+                    content = `
+                        <div class="card shadow-2xl border-t-4 border-primary-blue">
+                            <h2 class="text-4xl font-extrabold text-primary-blue mb-6">Quản Lý Học Phí & Doanh Thu</h2>
+                            <div class="mb-8 p-4 bg-yellow-50 border-l-4 border-secondary-orange rounded-lg text-sm text-gray-700 shadow-inner">
+                                <p class="font-bold text-base"><i class="fas fa-info-circle mr-2"></i> Quy định Khóa học:</p>
+                                <p>Số buổi: ${CONSTANTS.SESSIONS_PER_COURSE} | Đơn giá: <span class="font-bold text-primary-blue">${CONSTANTS.FEE_PER_SESSION.toLocaleString()}đ</span> / buổi.</p>
+                            </div>
+                            
+                            <div class="overflow-x-auto rounded-xl shadow-lg border border-gray-200">
+                                <table class="responsive-table">
+                                    <thead>
+                                        <tr>
+                                            <th class="w-12 text-center">STT</th>
+                                            <th>Học Sinh</th>
+                                            <th class="min-w-[350px]">Theo Dõi Đóng Tiền</th>
+                                            <th class="text-right w-32">Đã Đóng</th>
+                                            <th class="w-20 text-center">Tiến Độ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>${rows}</tbody>
+                                </table>
+                            </div>
+                            <div class="mt-8 p-6 bg-primary-blue text-white rounded-xl text-right shadow-2xl">
+                                <p class="text-xl font-medium">Tổng Doanh Thu Khóa Học Tạm Tính:</p>
+                                <p class="text-4xl font-extrabold">${app.calculateTotalRevenue().toLocaleString()}đ</p>
+                            </div>
+                        </div>
+                    `;
+                } else if (currentUser.role === 'parent') {
+                    // Parent View
+                    const student = users.find(u => u.role === 'student' && u.classId === currentUser.classId);
+                    const sFee = student ? fees[student.id] || { paidCount: 0 } : null;
+                    const paidCount = sFee ? sFee.paidCount : 0;
+                    const paidAmount = paidCount * CONSTANTS.FEE_PER_SESSION;
+
+                    let checks = '';
+                    for(let i=1; i<=CONSTANTS.SESSIONS_PER_COURSE; i++) {
+                        const isPaid = i <= paidCount;
+                        checks += `<div 
+                            class="w-10 h-10 border-2 rounded-full flex items-center justify-center mr-3 mb-3 text-base font-bold transition ${isPaid ? 'bg-accent-green text-white border-green-800 shadow-md' : 'bg-white border-gray-300 text-gray-500'}"
+                        >${i}</div>`;
+                    }
+
+                    content = `
+                        <div class="max-w-xl mx-auto card shadow-2xl border-t-4 border-secondary-orange">
+                            <h2 class="text-4xl font-extrabold text-primary-blue mb-6 text-center">Thông Tin Học Phí Của Con</h2>
+                            
+                            <div class="p-6 bg-blue-50 rounded-xl shadow-inner border border-primary-blue/20">
+                                <p class="mb-4 text-2xl font-extrabold text-primary-blue"><i class="fas fa-user-graduate mr-2"></i>${student ? student.name : 'Chưa có thông tin HS liên kết'}</p>
+                                <div class="grid grid-cols-2 gap-4 text-lg mb-6 border-b pb-4 border-blue-200">
+                                    <p><i class="fas fa-layer-group text-secondary-orange mr-2"></i>Lớp: <span class="font-bold">${currentUser.classId}</span></p>
+                                    <p><i class="fas fa-calendar-check text-secondary-orange mr-2"></i>Số buổi đã đóng: <span class="font-bold text-primary-blue">${paidCount} / ${CONSTANTS.SESSIONS_PER_COURSE}</span></p>
+                                </div>
+
+                                <div class="pt-4">
+                                    <p class="font-bold text-2xl mb-3 text-accent-green">Tổng Tiền Đã Đóng: ${paidAmount.toLocaleString()}đ</p>
+                                    <p class="font-bold mb-3 text-gray-700">Trạng thái đóng tiền theo buổi:</p>
+                                    <div class="flex flex-wrap justify-center sm:justify-start">${checks}</div>
+                                </div>
+                            </div>
+                            <p class="mt-6 text-gray-600 text-sm text-center">Vui lòng liên hệ Giáo viên để cập nhật trạng thái đóng học phí.</p>
+                        </div>
+                    `;
+                }
+
+                document.getElementById('mainContent').innerHTML = content;
+            },
+
+            // Các hàm còn lại giữ nguyên logic (renderHomework, renderSchedule, renderMaterials, renderStudentHomework)
+            
+            // ... (Đoạn mã của các hàm renderHomework, renderSchedule, renderMaterials, renderStudentHomework, calculateTotalRevenue, updateClassView nên được giữ nguyên ở đây để logic không bị lỗi) ...
+            
+            // (Tạm lược bớt để tập trung vào phần nâng cấp, nhưng trong file cuối cùng cần có đủ)
+            renderHomework: function() {
+                // Giữ nguyên logic renderHomework của bạn
+                this.setActiveNav('homework');
+                if(currentUser.role !== 'teacher') return;
+                
+                const assignments = db.get('assignments');
+                const users = db.get('users');
+
+                const questions = assignments.filter(a => !a.studentId);
+                const submissions = assignments.filter(a => a.studentId);
+
+                document.getElementById('mainContent').innerHTML = `
+                    <h2 class="text-4xl font-extrabold text-primary-blue mb-8">Quản Lý Bài Tập & Chấm Điểm</h2>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        
+                        <div class="card lg:col-span-1 shadow-2xl h-fit border-t-4 border-secondary-orange">
+                            <h3 class="text-2xl font-extrabold text-secondary-orange mb-4 border-b-2 pb-2 border-secondary-orange/30"><i class="fas fa-clipboard-list mr-2"></i>Giao Bài Tập Mới</h3>
+                            <div class="space-y-4">
+                                <input type="text" id="hwTitle" placeholder="Tiêu đề bài tập (VD: Bài ôn tập chương 3)" class="input-field">
+                                <select id="hwClass" class="input-field">
+                                    ${CONSTANTS.CLASSES.map(c => `<option value="${c}">Lớp ${c}</option>`).join('')}
+                                </select>
+                                <input type="url" id="hwLink" placeholder="Link Đề Bài (Google Form/File...)" class="input-field">
+                                <textarea id="hwDesc" placeholder="Ghi chú / Yêu cầu cụ thể..." class="input-field h-24"></textarea>
+                                <button onclick="createAssignment()" class="btn-secondary w-full"><i class="fas fa-paper-plane mr-2"></i>Giao Bài Ngay</button>
+                            </div>
+                        </div>
+
+                        <div class="card lg:col-span-2 shadow-2xl border-t-4 border-primary-blue">
+                            <h3 class="text-2xl font-extrabold text-primary-blue mb-4 border-b-2 pb-2 border-primary-blue/30">
+                                <i class="fas fa-check-double mr-2"></i>Bài Nộp Chờ Chấm (<span class="text-red-600">${submissions.filter(s => s.score === null).length}</span>)
+                            </h3>
+                            <div class="space-y-4 max-h-[700px] overflow-y-auto pr-2">
+                                ${submissions.length === 0 ? '<p class="text-gray-500 p-4 border rounded-xl text-center">Chưa có bài nộp nào.</p>' : 
+                                    submissions.sort((a, b) => (a.score === null) ? -1 : 1).map(sub => {
+                                        const stu = users.find(u => u.id === sub.studentId);
+                                        const isGraded = sub.score !== null;
+                                        return `
+                                            <div class="border rounded-xl p-4 shadow-md transition ${isGraded ? 'bg-accent-green/10 border-accent-green/50' : 'bg-red-50 border-red-200'}">
+                                                <div class="flex justify-between items-center mb-2">
+                                                    <p class="font-bold text-lg text-gray-800">${stu ? stu.name : 'Unknown'} <span class="text-sm font-normal text-gray-500">- Lớp ${sub.classId}</span></p>
+                                                    <span class="text-sm font-extrabold ${isGraded ? 'text-accent-green' : 'text-red-600'}">${isGraded ? `ĐIỂM: ${sub.score}` : 'CHỜ CHẤM'}</span>
+                                                </div>
+                                                <p class="text-xs text-primary-blue mb-3 italic font-semibold">Bài tập: ${sub.title}</p>
+                                                
+                                                <div class="bg-white p-3 border rounded-lg mb-3 shadow-inner whitespace-pre-wrap">
+                                                    <span class="font-semibold text-sm text-gray-700">Nội dung nộp:</span> <span class="text-sm text-gray-600">${sub.answerText}</span>
+                                                </div>
+                                                
+                                                <div class="flex gap-3 items-center pt-2 border-t border-gray-200">
+                                                    <label class="font-semibold text-sm whitespace-nowrap">Chấm điểm (0-10):</label>
+                                                    <input type="number" id="score-${sub.id}" value="${sub.score || ''}" min="0" max="10" step="0.5" placeholder="Điểm" class="border p-2 w-24 text-center rounded-lg focus:ring-primary-blue/50 input-field !p-2">
+                                                    <button onclick="gradeAssignment('${sub.id}')" class="bg-blue-600 text-white text-sm px-4 py-2 rounded-xl hover:bg-blue-700 font-semibold transition shadow-md whitespace-nowrap">Lưu Điểm</button>
+                                                </div>
+                                            </div>
+                                        `;
+                                    }).join('')
+                                }
+                            </div>
+                        </div>
+                    </div>
+                `;
+            },
+            
+            renderSchedule() {
+                // Giữ nguyên logic renderSchedule của bạn
+                this.setActiveNav('schedule');
+                const isTeacher = currentUser.role === 'teacher';
+                const classToView = isTeacher ? currentClassView : (currentUser?.classId || CONSTANTS.CLASSES[0]);
+                const schedules = db.get('schedule').filter(s => s.classId === classToView);
+                
+                let content = `
+                    <div class="card shadow-2xl border-t-4 border-secondary-orange">
+                        <div class="flex flex-wrap justify-between items-center mb-8 border-b-4 pb-4 border-primary-blue/20">
+                            <h2 class="text-4xl font-extrabold text-primary-blue">Lịch Học Lớp ${classToView}</h2>
+                            ${isTeacher ? 
+                                `<button onclick="showScheduleModal()" class="btn-primary mt-4 sm:mt-0 !py-2 !px-4"><i class="fas fa-plus mr-2"></i> Thêm Lịch Mới</button>` 
+                                : ''}
+                        </div>
+                        
+                        ${isTeacher ? `
+                            <div class="mb-6 p-4 bg-light-bg rounded-xl shadow-inner flex items-center gap-3 border border-gray-200">
+                                <label class="font-bold text-gray-700 whitespace-nowrap">Xem/Quản lý Lịch cho Lớp:</label>
+                                <select id="scheduleClassSelect" class="input-field !p-2" onchange="app.updateClassView(this.value, 'schedule')">
+                                    ${CONSTANTS.CLASSES.map(c => `<option value="${c}" ${c === currentClassView ? 'selected' : ''}>Lớp ${c}</option>`).join('')}
+                                </select>
+                            </div>
+                        ` : ''}
+
+                        <div id="scheduleContainer" class="space-y-4">
+                            ${schedules.length === 0 ? `<p class="text-gray-500 p-6 border rounded-xl text-center bg-yellow-50"><i class="fas fa-calendar-times mr-2"></i>Chưa có lịch học nào được thiết lập cho lớp ${classToView}.</p>` :
+                                schedules.map(s => `
+                                    <div class="p-5 bg-white border-l-8 border-secondary-orange rounded-xl shadow-md flex justify-between items-center flex-wrap hover:shadow-lg transition">
+                                        <div>
+                                            <p class="font-extrabold text-xl text-primary-blue">${s.day}, ${s.time}</p>
+                                            <p class="text-base text-gray-700 mt-1">${s.subject}</p>
+                                            <p class="text-xs font-bold text-secondary-orange mt-1">Áp dụng cho Lớp: ${s.classId}</p>
+                                        </div>
+                                        ${isTeacher ? `
+                                            <div class="space-x-3 mt-3 sm:mt-0">
+                                                <button onclick="showScheduleModal('${s.id}')" class="text-blue-500 hover:text-blue-700 font-medium text-sm p-2 rounded-lg hover:bg-blue-50 transition"><i class="fas fa-edit"></i> Sửa</button>
+                                                <button onclick="deleteSchedule('${s.id}')" class="text-red-500 hover:text-red-700 font-medium text-sm p-2 rounded-lg hover:bg-red-50 transition"><i class="fas fa-trash"></i> Xóa</button>
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                `).join('')
+                            }
+                        </div>
+                    </div>
+                `;
+                document.getElementById('mainContent').innerHTML = content;
+            },
+            
+            renderMaterials() {
+                // Giữ nguyên logic renderMaterials của bạn
+                this.setActiveNav('materials');
+                const isTeacher = currentUser.role === 'teacher';
+                const classToView = isTeacher ? currentClassView : (currentUser?.classId || CONSTANTS.CLASSES[0]);
+                const materials = db.get('materials').filter(m => m.classId === classToView);
+
+                 document.getElementById('mainContent').innerHTML = `
+                    <div class="card shadow-2xl border-t-4 border-primary-blue">
+                        <div class="flex flex-wrap justify-between items-center mb-8 border-b-4 pb-4 border-secondary-orange/20">
+                            <h2 class="text-4xl font-extrabold text-primary-blue">Kho Tài Liệu Lớp ${classToView}</h2>
+                            ${isTeacher ? 
+                                `<button onclick="showMaterialModal()" class="btn-secondary mt-4 sm:mt-0 !py-2 !px-4"><i class="fas fa-cloud-upload-alt mr-2"></i> Tải Lên Tài Liệu</button>` 
+                                : ''}
+                        </div>
+
+                        ${isTeacher ? `
+                            <div class="mb-6 p-4 bg-light-bg rounded-xl shadow-inner flex items-center gap-3 border border-gray-200">
+                                <label class="font-bold text-gray-700 whitespace-nowrap">Xem/Quản lý Tài liệu cho Lớp:</label>
+                                <select id="materialClassSelect" class="input-field !p-2" onchange="app.updateClassView(this.value, 'materials')">
+                                    ${CONSTANTS.CLASSES.map(c => `<option value="${c}" ${c === currentClassView ? 'selected' : ''}>Lớp ${c}</option>`).join('')}
+                                </select>
+                            </div>
+                        ` : ''}
+
+                        <div id="materialContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            ${materials.length === 0 ? `<p class="text-gray-500 p-6 border rounded-xl text-center bg-yellow-50 col-span-2"><i class="fas fa-folder-open mr-2"></i>Chưa có tài liệu nào cho lớp ${classToView}.</p>` :
+                                materials.map(m => `
+                                    <div class="p-5 border-l-4 border-primary-blue rounded-xl bg-white shadow-lg flex flex-col justify-between hover:shadow-xl transition">
+                                        <div class="flex justify-between items-start gap-4">
+                                            <div class="flex-grow">
+                                                <p class="font-extrabold text-xl text-gray-800">${m.title}</p>
+                                                <p class="text-xs text-secondary-orange font-semibold mt-1">${m.type}</p>
+                                            </div>
+                                            <i class="fas fa-file-pdf text-4xl text-red-500 flex-shrink-0 opacity-70"></i>
+                                        </div>
+                                        <div class="mt-4 pt-3 border-t border-gray-100 flex justify-between items-center">
+                                            <a href="${m.link}" target="_blank" class="text-primary-blue font-bold text-sm hover:underline hover:text-blue-700 transition">
+                                                <i class="fas fa-download mr-1"></i> Tải Xuống
+                                            </a>
+                                            ${isTeacher ? `
+                                                <button onclick="deleteMaterial('${m.id}')" class="text-red-500 hover:text-red-700 text-sm p-1 rounded-lg hover:bg-red-50 transition"><i class="fas fa-trash-alt"></i> Xóa</button>
+                                            ` : ''}
+                                        </div>
+                                    </div>
+                                `).join('')
+                            }
+                        </div>
+                    </div>
+                 `;
+            },
+            
+            renderStudentHomework() {
+                // Giữ nguyên logic renderStudentHomework của bạn
+                this.setActiveNav('student-homework');
+                if(currentUser.role !== 'student') return;
+                
+                const assignments = db.get('assignments');
+                const myAssignments = assignments.filter(a => !a.studentId && a.classId === currentUser.classId); 
+                const mySubmissions = assignments.filter(a => a.studentId === currentUser.id);
+
+                document.getElementById('mainContent').innerHTML = `
+                    <div class="card shadow-2xl border-t-4 border-primary-blue">
+                        <h2 class="text-4xl font-extrabold text-primary-blue mb-8">Bài Tập Cần Làm - Lớp ${currentUser.classId}</h2>
+                        <div class="space-y-6">
+                            ${myAssignments.length === 0 ? '<p class="text-gray-500 p-6 border rounded-xl text-center bg-accent-green/10 text-accent-green font-bold"><i class="fas fa-check-circle mr-2"></i>Hiện tại không có bài tập nào mới. Hãy thư giãn!</p>' : 
+                                myAssignments.map(hw => {
+                                    const sub = mySubmissions.find(s => s.parentId === hw.id);
+                                    let statusHtml;
+                                    let statusColor;
+                                    
+                                    if (sub) {
+                                        if (sub.score !== null) {
+                                            statusHtml = `<span class="bg-accent-green text-white px-3 py-1 rounded-full font-bold shadow-md">ĐÃ CHẤM: ${sub.score} Đ</span>`;
+                                            statusColor = 'border-accent-green';
+                                        } else {
+                                            statusHtml = `<span class="bg-yellow-500 text-white px-3 py-1 rounded-full font-bold shadow-md">CHỜ CHẤM</span>`;
+                                            statusColor = 'border-yellow-500';
+                                        }
+                                    } else {
+                                        statusHtml = `<span class="bg-red-500 text-white px-3 py-1 rounded-full font-bold shadow-md">CHƯA LÀM</span>`;
+                                        statusColor = 'border-red-500';
+                                    }
+                                    
+                                    return `
+                                        <div class="border-l-8 ${statusColor} rounded-xl p-5 bg-white shadow-lg hover:shadow-xl transition">
+                                            <div class="flex justify-between items-start">
+                                                <div>
+                                                    <h4 class="font-extrabold text-2xl text-primary-blue mb-1">${hw.title}</h4>
+                                                    <p class="text-gray-600 text-sm mb-3 italic">${hw.desc}</p>
+                                                    <a href="${hw.link}" target="_blank" class="text-secondary-orange font-bold hover:underline transition">
+                                                        <i class="fas fa-external-link-alt mr-1"></i> Xem Đề Bài Chi Tiết
+                                                    </a>
+                                                </div>
+                                                <div class="text-right flex-shrink-0">
+                                                    ${statusHtml}
+                                                </div>
+                                            </div>
+                                            
+                                            ${!sub ? `
+                                                <div class="mt-4 pt-4 border-t border-gray-100">
+                                                    <p class="text-sm font-bold mb-2 text-gray-700"><i class="fas fa-reply mr-1 text-primary-blue"></i> Nộp Bài Tự Luận/Link File Bài Làm:</p>
+                                                    <div class="flex flex-col sm:flex-row gap-3">
+                                                        <input type="text" id="ans-${hw.id}" class="input-field text-sm flex-grow !p-2" placeholder="Nhập tóm tắt, đáp án hoặc link file ảnh/pdf...">
+                                                        <button onclick="submitHomework('${hw.id}')" class="btn-secondary !py-2 !px-4 whitespace-nowrap"><i class="fas fa-upload mr-1"></i> Nộp Bài</button>
+                                                    </div>
+                                                </div>
+                                            ` : sub && sub.score !== null ? `
+                                                <div class="mt-4 pt-4 border-t border-gray-100 p-3 bg-gray-50 rounded-lg">
+                                                    <p class="font-bold text-sm text-gray-700">Nội dung đã nộp:</p>
+                                                    <p class="text-sm italic whitespace-pre-wrap">${sub.answerText}</p>
+                                                </div>
+                                            ` : `
+                                                <div class="mt-4 pt-4 border-t border-gray-100 p-3 bg-yellow-50 rounded-lg border-l-4 border-yellow-400">
+                                                    <p class="font-bold text-sm text-yellow-800"><i class="fas fa-hourglass-half mr-1"></i> Bài của bạn đã được nộp và đang chờ giáo viên chấm điểm.</p>
+                                                </div>
+                                            `}
+                                        </div>
+                                    `;
+                                }).join('')
+                            }
+                        </div>
+                    </div>
+                `;
+            },
+            
+            calculateTotalRevenue() {
+                const fees = db.get('fees');
+                let total = 0;
+                Object.values(fees).forEach(f => {
+                    total += (f.paidCount || 0) * CONSTANTS.FEE_PER_SESSION;
+                });
+                return total;
+            },
+
+            updateClassView(newClassId, section) {
+                currentClassView = newClassId; 
+                
+                if (section === 'schedule') {
+                    app.renderSchedule();
+                } else if (section === 'materials') {
+                    app.renderMaterials();
+                } else if (section === 'attendance') {
+                    loadAttendanceSheet();
+                }
+            }
+        };
+
+        // --- GLOBAL FUNCTIONS (Actions - Giữ nguyên logic) ---
+
+        function toggleParentLabel() {
+            const role = document.getElementById('regRole').value;
+            const label = document.getElementById('classLabel');
+            label.innerHTML = (role === 'parent') ? '<i class="fas fa-layer-group mr-1"></i> Chọn Lớp Của Con' : '<i class="fas fa-layer-group mr-1"></i> Chọn Lớp Đăng Ký';
+        }
+
+        function handleLogin() {
+            const u = document.getElementById('loginUser').value;
+            const p = document.getElementById('loginPass').value;
+            const errorElement = document.getElementById('loginError');
+
+            if (auth.login(u, p)) {
+                errorElement.classList.add('hidden');
+            } else {
+                errorElement.classList.remove('hidden');
+            }
+        }
+
+        function handleRegister() {
+            const name = document.getElementById('regName').value;
+            const phone = document.getElementById('regPhone').value;
+            const pass = document.getElementById('regPass').value;
+            const role = document.getElementById('regRole').value;
+            const cls = document.getElementById('regClass').value;
+            const errorElement = document.getElementById('registerError');
+
+            if(!name || !phone || !pass || !cls) {
+                errorElement.innerText = 'Vui lòng điền đầy đủ thông tin!';
+                errorElement.classList.remove('hidden');
+                return;
+            }
+            errorElement.classList.add('hidden');
+
+            if(auth.register(name, phone, pass, role, cls)) {
+                showCustomMessage('Đăng ký thành công', 'Tài khoản của bạn đã được tạo! Vui lòng đăng nhập bằng SĐT và Mật khẩu.', 'success', () => app.renderLogin());
+            } else {
+                errorElement.innerText = 'Số điện thoại này đã được đăng ký!';
+                errorElement.classList.remove('hidden');
+            }
+        }
+
+        function showCustomMessage(title, message, type, callback) {
+            const modalContainer = document.getElementById('modalContainer');
+            const iconClass = type === 'success' ? 'fas fa-check-circle text-accent-green' : 'fas fa-exclamation-triangle text-red-600';
+            const buttonColor = type === 'success' ? 'bg-accent-green hover:bg-green-700' : 'bg-primary-blue hover:bg-blue-700';
+
+            modalContainer.innerHTML = `
+                <div class="modal-backdrop z-[1001]" onclick="closeModal()">
+                    <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-sm text-center transform scale-95 transition-transform duration-300" onclick="event.stopPropagation()">
+                        <i class="${iconClass} text-5xl mb-4"></i>
+                        <h3 class="text-2xl font-bold mt-2 mb-3 text-gray-800">${title}</h3>
+                        <p class="text-gray-600 mb-6">${message}</p>
+                        <button onclick="closeModal(); ${callback ? 'callback()' : ''}" class="py-3 px-6 text-white ${buttonColor} rounded-xl font-bold shadow-md transition">Xác Nhận</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function loadAttendanceSheet() {
+            const cls = document.getElementById('attClass').value;
+            const date = document.getElementById('attDate').value;
+            const sheetDiv = document.getElementById('attendanceSheet');
+            
+            if(!cls || !date) {
+                sheetDiv.innerHTML = `<p class="text-center text-gray-500 p-4"><i class="fas fa-info-circle mr-2"></i>Chọn Lớp và Ngày để bắt đầu điểm danh.</p>`;
+                return;
+            }
+
+            const users = db.get('users');
+            const students = users.filter(u => u.role === 'student' && u.classId === cls).sort((a,b) => a.name.localeCompare(b.name, 'vi'));
+            const attData = db.get('attendance');
+            const key = `${cls}_${date}`;
+            const currentAtt = attData[key] || {};
+
+            let html = `
+                <div class="overflow-x-auto rounded-xl shadow-md border border-gray-200">
+                <table class="responsive-table">
+                    <thead>
+                        <tr class="bg-primary-blue text-white">
+                            <th class="w-16">STT</th>
+                            <th>Họ Tên</th>
+                            <th class="w-24 text-center">Có Mặt</th>
+                            <th class="min-w-[200px]">Ghi Chú</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            if(students.length === 0) {
+                html += `<tr><td colspan="4" class="p-4 text-center text-gray-500 bg-white">Không có học sinh trong lớp này.</td></tr>`;
+            } else {
+                students.forEach((s, idx) => {
+                    const isPresent = currentAtt[s.id]?.present || false;
+                    const note = currentAtt[s.id]?.note || '';
+                    html += `
+                        <tr class="${isPresent ? 'bg-accent-green/10' : 'bg-red-50'} hover:!bg-gray-100 transition duration-150">
+                            <td class="text-center">${idx + 1}</td>
+                            <td class="font-bold text-gray-800">${s.name}</td>
+                            <td class="text-center">
+                                <input type="checkbox" class="w-5 h-5 accent-secondary-orange cursor-pointer" onchange="saveAttendance('${cls}', '${date}', '${s.id}', this.checked)" ${isPresent ? 'checked' : ''}>
+                            </td>
+                            <td>
+                                <input type="text" class="w-full text-sm p-2 border-2 border-transparent focus:border-primary-blue rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue/50 bg-transparent" value="${note}" placeholder="Vắng có phép, bệnh..." onblur="saveAttendanceNote('${cls}', '${date}', '${s.id}', this.value)">
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+
+            html += `</tbody></table></div>`;
+            sheetDiv.innerHTML = html;
+        }
+
+        function saveAttendance(cls, date, studentId, isPresent) {
+            const attData = db.get('attendance');
+            const key = `${cls}_${date}`;
+            if(!attData[key]) attData[key] = {};
+            if(!attData[key][studentId]) attData[key][studentId] = {};
+            
+            attData[key][studentId].present = isPresent;
+            db.set('attendance', attData);
+            loadAttendanceSheet();
+        }
+
+        function saveAttendanceNote(cls, date, studentId, note) {
+            const attData = db.get('attendance');
+            const key = `${cls}_${date}`;
+            if(!attData[key]) attData[key] = {};
+            if(!attData[key][studentId]) attData[key][studentId] = {};
+            
+            attData[key][studentId].note = note;
+            db.set('attendance', attData);
+        }
+
+        function toggleFee(studentId, count) {
+            if(currentUser.role !== 'teacher') return;
+            const fees = db.get('fees');
+            if(!fees[studentId]) fees[studentId] = { paidCount: 0 };
+            
+            if (fees[studentId].paidCount === count) {
+                fees[studentId].paidCount = count - 1;
+            } else {
+                fees[studentId].paidCount = count;
+            }
+            
+            db.set('fees', fees);
+            app.renderFees();
+        }
+
+        function createAssignment() {
+            const title = document.getElementById('hwTitle').value;
+            const cls = document.getElementById('hwClass').value;
+            const link = document.getElementById('hwLink').value;
+            const desc = document.getElementById('hwDesc').value;
+
+            if(!title || !link) { showCustomMessage('Lỗi nhập liệu', 'Cần nhập Tiêu đề và Link bài tập!', 'error'); return; }
+
+            const assignments = db.get('assignments');
+            assignments.push({
+                id: Date.now().toString(),
+                classId: cls,
+                title,
+                link,
+                desc,
+                studentId: null, 
+                parentId: null,
+                score: null,
+                answerText: null
+            });
+            db.set('assignments', assignments);
+            showCustomMessage('Thành công', `Đã giao bài tập thành công cho lớp ${cls}!`, 'success');
+            app.renderHomework();
+        }
+
+        function submitHomework(parentId) {
+            const answer = document.getElementById(`ans-${parentId}`).value;
+            if(!answer) { showCustomMessage('Lỗi nhập liệu', 'Vui lòng nhập nội dung bài nộp!', 'error'); return; }
+
+            const assignments = db.get('assignments');
+            const parentHw = assignments.find(a => a.id === parentId);
+            
+            let existingSub = assignments.find(s => s.parentId === parentId && s.studentId === currentUser.id);
+
+            if (existingSub) {
+                existingSub.answerText = answer;
+                existingSub.score = null;
+            } else {
+                assignments.push({
+                    id: Date.now().toString(),
+                    parentId: parentId,
+                    classId: currentUser.classId,
+                    title: parentHw.title,
+                    studentId: currentUser.id,
+                    answerText: answer,
+                    score: null
+                });
+            }
+            db.set('assignments', assignments);
+            showCustomMessage('Thành công', 'Nộp bài thành công! Bài nộp đang chờ chấm điểm.', 'success');
+            app.renderStudentHomework();
+        }
+
+        function gradeAssignment(submissionId) {
+            const scoreInput = document.getElementById(`score-${submissionId}`);
+            const score = parseFloat(scoreInput.value);
+            
+            if (isNaN(score) || score < 0 || score > 10) {
+                 showCustomMessage('Lỗi điểm số', 'Điểm không hợp lệ. Vui lòng nhập điểm từ 0 đến 10.', 'error');
+                 return;
+            }
+
+            const assignments = db.get('assignments');
+            const sub = assignments.find(a => a.id === submissionId);
+            if(sub) {
+                sub.score = score;
+                db.set('assignments', assignments);
+                showCustomMessage('Thành công', `Đã lưu điểm ${score} cho bài nộp.`, 'success');
+                app.renderHomework();
+            }
+        }
+
+        // --- SCHEDULE/MATERIAL CRUD (Giữ nguyên logic/tối ưu giao diện modal) ---
+
+        function showScheduleModal(id = null) {
+            const schedules = db.get('schedule');
+            const schedule = id ? schedules.find(s => s.id === id) : {};
+            const isEdit = !!id;
+
+            const classOptions = CONSTANTS.CLASSES.map(c => 
+                `<option value="${c}" ${schedule.classId === c ? 'selected' : ''}>Lớp ${c}</option>`
+            ).join('');
+
+            const days = ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ Nhật"];
+            const dayOptions = days.map(d => 
+                `<option value="${d}" ${schedule.day === d ? 'selected' : ''}>${d}</option>`
+            ).join('');
+
+            document.getElementById('modalContainer').innerHTML = `
+                <div class="modal-backdrop z-[1001]" onclick="closeModal()">
+                    <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-lg transform scale-95 transition-transform duration-300" onclick="event.stopPropagation()">
+                        <h3 class="text-2xl font-bold ${isEdit ? 'text-primary-blue' : 'text-secondary-orange'} mb-6 border-b pb-2"><i class="fas fa-calendar-alt mr-2"></i> ${isEdit ? 'Sửa Lịch Học' : 'Thêm Lịch Học Mới'}</h3>
+                        <div class="space-y-4">
+                            <input type="hidden" id="schId" value="${schedule.id || ''}">
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700">Lớp Áp Dụng</label>
+                                <select id="schClass" class="input-field">${classOptions}</select>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-700">Thứ</label>
+                                    <select id="schDay" class="input-field">${dayOptions}</select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-700">Thời Gian</label>
+                                    <input type="text" id="schTime" class="input-field" value="${schedule.time || ''}" placeholder="17:30 - 19:00">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700">Nội dung/Môn học</label>
+                                <input type="text" id="schSubject" class="input-field" value="${schedule.subject || 'Toán Bồi Dưỡng'}" placeholder="Nội dung buổi học">
+                            </div>
+                        </div>
+                        <div class="mt-8 flex justify-end space-x-3">
+                            <button onclick="closeModal()" class="py-3 px-6 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 font-semibold shadow-md transition">Hủy</button>
+                            <button onclick="saveSchedule()" class="btn-primary !py-3 !px-6">${isEdit ? 'Lưu Thay Đổi' : 'Thêm Lịch'}</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function saveSchedule() {
+            const id = document.getElementById('schId').value || Date.now().toString();
+            const classId = document.getElementById('schClass').value;
+            const day = document.getElementById('schDay').value;
+            const time = document.getElementById('schTime').value;
+            const subject = document.getElementById('schSubject').value;
+
+            if (!classId || !day || !time) {
+                showCustomMessage('Lỗi nhập liệu', 'Vui lòng điền đủ Lớp, Thứ và Thời Gian.', 'error');
+                return;
+            }
+
+            const newSchedule = { id, classId, day, time, subject };
+            let schedules = db.get('schedule');
+            let message = '';
+
+            if (schedules.some(s => s.id === id)) {
+                schedules = schedules.map(s => s.id === id ? newSchedule : s);
+                message = 'Đã cập nhật lịch học!';
+            } else {
+                schedules.push(newSchedule);
+                message = 'Đã thêm lịch học mới!';
+            }
+
+            db.set('schedule', schedules);
+            closeModal();
+            app.updateClassView(classId, 'schedule');
+            showCustomMessage('Thành công', message, 'success');
+        }
+
+        function deleteSchedule(id) {
+             const confirmed = window.confirm('Bạn có chắc chắn muốn xóa lịch học này không?');
+            if(confirmed) {
+                let schedules = db.get('schedule');
+                schedules = schedules.filter(s => s.id !== id);
+                db.set('schedule', schedules);
+                showCustomMessage('Thành công', 'Đã xóa lịch học.', 'success');
+                app.renderSchedule();
+            }
+        }
+
+        function showMaterialModal() {
+             const classOptions = CONSTANTS.CLASSES.map(c => 
+                `<option value="${c}">Lớp ${c}</option>`
+            ).join('');
+
+            document.getElementById('modalContainer').innerHTML = `
+                <div class="modal-backdrop z-[1001]" onclick="closeModal()">
+                    <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-lg transform scale-95 transition-transform duration-300" onclick="event.stopPropagation()">
+                        <h3 class="text-2xl font-bold text-secondary-orange mb-6 border-b pb-2"><i class="fas fa-cloud-upload-alt mr-2"></i> Tải Lên Tài Liệu Mới</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700">Lớp Áp Dụng</label>
+                                <select id="matClass" class="input-field">${classOptions}</select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700">Tiêu Đề Tài Liệu</label>
+                                <input type="text" id="matTitle" class="input-field" placeholder="Ví dụ: Chuyên đề Lượng giác lớp 9">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700">Link File (PDF, DOCX, Google Drive, v.v...)</label>
+                                <input type="url" id="matLink" class="input-field" placeholder="https://drive.google.com/link_file">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700">Loại Tài Liệu</label>
+                                <select id="matType" class="input-field">
+                                    <option value="Tài Liệu Đọc">Tài Liệu Đọc</option>
+                                    <option value="Bài Tập">Bài Tập</option>
+                                    <option value="Đề Thi">Đề Thi</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mt-8 flex justify-end space-x-3">
+                            <button onclick="closeModal()" class="py-3 px-6 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 font-semibold shadow-md transition">Hủy</button>
+                            <button onclick="saveMaterial()" class="btn-secondary !py-3 !px-6">Tải Lên</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function saveMaterial() {
+            const classId = document.getElementById('matClass').value;
+            const title = document.getElementById('matTitle').value;
+            const link = document.getElementById('matLink').value;
+            const type = document.getElementById('matType').value;
+
+            if (!classId || !title || !link) {
+                showCustomMessage('Lỗi nhập liệu', 'Vui lòng điền đủ Lớp, Tiêu đề và Link.', 'error');
+                return;
+            }
+
+            const newMaterial = { id: Date.now().toString(), classId, title, link, type };
+            let materials = db.get('materials');
+            materials.push(newMaterial);
+            db.set('materials', materials);
+            
+            showCustomMessage('Thành công', 'Đã tải lên tài liệu mới!', 'success');
+            closeModal();
+            app.updateClassView(classId, 'materials');
+        }
+
+        function deleteMaterial(id) {
+            const confirmed = window.confirm('Bạn có chắc chắn muốn xóa tài liệu này không?');
+            if(confirmed) {
+                let materials = db.get('materials');
+                materials = materials.filter(m => m.id !== id);
+                db.set('materials', materials);
+                showCustomMessage('Thành công', 'Đã xóa tài liệu.', 'success');
+                app.renderMaterials();
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modalContainer').innerHTML = '';
+        }
+
+        // Initialize App
+        app.init();
+
+    </script>
 </body>
 </html>
