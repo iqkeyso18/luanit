@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trung Tâm Toán Cô Huyền - Nền Tảng Quản Lý Giáo Viên</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-blue': '#1e40af', // Xanh đậm, mạnh mẽ
+                        'secondary-orange': '#f97316', // Cam rực rỡ, màu nhấn
+                        'accent-green': '#16a34a', // Xanh lá cây cho Success/Doanh thu
+                        'light-bg': '#f3f4f6',
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        /* Nút Chính */
+        .btn-primary { @apply bg-primary-blue text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:bg-blue-800 transition duration-300 transform hover:-translate-y-0.5; }
+        /* Nút Phụ */
+        .btn-secondary { @apply bg-secondary-orange text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:bg-orange-600 transition duration-300 transform hover:-translate-y-0.5; }
+        /* Card hiện đại */
+        .card { @apply bg-white p-6 md:p-8 rounded-3xl shadow-2xl border border-gray-100; }
+        /* Input Field */
+        .input-field { @apply w-full p-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-primary-blue focus:ring-4 focus:ring-primary-blue/20 transition; }
+        /* Bảng */
+        .responsive-table { border-collapse: separate; border-spacing: 0; width: 100%; }
+        .responsive-table th, .responsive-table td { padding: 16px; border-bottom: 1px solid #e5e7eb; }
+        .responsive-table th { @apply bg-primary-blue text-white font-extrabold text-left uppercase text-sm; }
+        .responsive-table tbody tr:hover { @apply bg-blue-50; }
+        
+        /* Banner Style - Ảnh chủ đề toán học */
+        .hero-banner {
+            background-image: url('https://picsum.photos/1200/400?random=1&blur=2');
+            /* Hình ảnh Placeholder */
+            background-size: cover;
+            background-position: center;
+            min-height: 250px;
+            @apply rounded-3xl shadow-2xl mb-12 flex items-center p-10 md:p-16;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3 cursor-pointer group" onclick="app.renderDashboard()">
+                <i class="fas fa-calculator text-4xl text-primary-blue group-hover:scale-110 transition duration-300"></i>
+                <div>
+                    <h1 class="text-2xl font-extrabold text-primary-blue">CÔ HUYỀN MATH</h1>
+                    <p class="text-xs text-secondary-orange font-bold">Quản Lý Nền Tảng Giáo Viên</p>
+                </div>
+            </div>
+            <div id="authSection"></div>
+        </div>
+    </nav>
+
+    <div id="mainContent" class="container mx-auto px-4 py-10 min-h-screen"></div>
+
+    <div id="modalContainer"></div>
+
+    <footer class="bg-primary-blue text-white py-8 mt-16 shadow-inner">
+        <div class="container mx-auto px-4 text-center">
+            <p class="font-bold text-lg mb-2">TRUNG TÂM TOÁN CÔ HUYỀN</p>
+            <p class="text-sm opacity-80">Hệ thống quản lý thông minh. © 2024 All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // ----------------------------------------
+        // 1. CẤU HÌNH & DỮ LIỆU CƠ BẢN
+        // ----------------------------------------
+        const CONFIG = {
+            FEE_PER_SESSION: 80000,
+            SESSIONS_PER_COURSE: 10
+        };
+        const CLASSES = [];
+        for (let g = 4; g <= 9; g++) {
+            for (let i = 1; i <= 3; i++) CLASSES.push(`${g}.${i}`);
+        }
+
+        // ----------------------------------------
+        // 2. DATABASE & LOGIC
+        // ----------------------------------------
+        const db = {
+            get(key) { 
+                try { 
+                    const data = localStorage.getItem(key);
+                    return data ? JSON.parse(data) : (key === 'fees' || key === 'attendance' ? {} : []);
+                } catch { 
+                    return (key === 'fees' || key === 'attendance' ? {} : []);
+                } 
+            },
+            set(key, val) { localStorage.setItem(key, JSON.stringify(val)); },
+            init() {
+                // Ensure Admin user exists
+                let users = this.get('users');
+                if (!users.some(u => u.username === 'admin')) {
+                    users.push({ id: 'admin', name: 'Cô Huyền', role: 'teacher', username: 'admin', password: '123' });
+                    this.set('users', users);
+                }
+
+                // Initialize Demo Students (Crucial for testing)
+                let students = this.get('students');
+                if (students.length === 0) {
+                    const demoStudents = [];
+                    for (let i = 1; i <= 30; i++) {
+                        const classId = CLASSES[i % CLASSES.length];
+                        demoStudents.push({
+                            id: `s_${Date.now() + i}`,
+                            name: `Học Sinh Vàng ${i}`,
+                            phone: `0987${String(100 + i).padStart(3, '0')}`,
+                            classId: classId
+                        });
+                    }
+                    this.set('students', demoStudents);
+                }
+                
+                // Initialize other data structures if not present
+                if (!localStorage.getItem('fees')) this.set('fees', {});
+                if (!localStorage.getItem('attendance')) this.set('attendance', {});
+
+                // NEW: Ensure fee structure has history for all students (migration)
+                let fees = this.get('fees');
+                for (const studentId in fees) {
+                    if (!fees[studentId].history) {
+                        fees[studentId].history = [];
+                    }
+                    if (!fees[studentId].current) {
+                        fees[studentId].current = { paid: 0, remaining: 0 };
+                    }
+                }
+                this.set('fees', fees);
+            }
+        };
+
+        let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+        const auth = {
+            login(u, p) {
+                const users = db.get('users');
+                const user = users.find(x => (x.username === u || x.phone === u) && x.password === p && x.role === 'teacher');
+                if (user) {
+                    currentUser = user;
+                    localStorage.setItem('currentUser', JSON.stringify(user));
+                    app.init();
+                    return true;
+                }
+                return false;
+            },
+            logout() {
+                currentUser = null;
+                localStorage.removeItem('currentUser');
+                app.renderLogin();
+            }
+        };
+        // ----------------------------------------
+        // 3. UI/VIEW LOGIC
+        // ----------------------------------------
+        const app = {
+            init() {
+                db.init();
+                document.getElementById('authSection').innerHTML = currentUser ?
+                    `<div class="flex items-center gap-4">
+                        <span class="font-extrabold text-primary-blue"><i class="fas fa-user-circle mr-2"></i>${currentUser.name} (Giáo viên)</span>
+                        <button onclick="auth.logout()" class="text-red-600 hover:text-red-800 font-bold p-2 bg-red-100 rounded-lg transition">
+                            <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                        </button>
+                    </div>` :
+                    `<button onclick="app.renderLogin()" class="btn-primary">Đăng Nhập</button>`;
+                if (currentUser) this.renderDashboard();
+                else this.renderLogin();
+            },
+
+            renderLogin() {
+                document.getElementById('mainContent').innerHTML = `
+                    <div class="max-w-md mx-auto card mt-20 text-center border-t-8 border-primary-blue">
+                        <i class="fas fa-chalkboard-teacher text-6xl text-primary-blue mb-6"></i>
+                        <h2 class="text-3xl font-extrabold mb-8 text-primary-blue">ĐĂNG NHẬP HỆ THỐNG</h2>
+                        <input id="user" type="text" class="input-field mb-4" placeholder="Tài khoản (admin)">
+                        <input id="pass" type="password" class="input-field mb-6" placeholder="Mật khẩu (123)">
+                        <button onclick="handleLogin()" class="btn-primary w-full py-4 text-lg">ĐĂNG NHẬP NGAY</button>
+                        <p class="text-sm text-gray-500 mt-4">Chỉ dành cho Giáo viên quản lý.</p>
+                    </div>`;
+            },
+
+            renderDashboard() {
+                const students = db.get('students');
+                const stats = this.calculateDashboardStats();
+
+                document.getElementById('mainContent').innerHTML = `
+                    <div class="hero-banner relative">
+                        <div class="absolute inset-0 bg-primary-blue opacity-70 rounded-3xl"></div>
+                        <div class="relative text-white z-10">
+                            <h2 class="text-2xl font-medium mb-2 opacity-90">Xin chào, ${currentUser.name}!</h2>
+                            <h1 class="text-5xl font-extrabold mb-3 leading-tight">BẢNG ĐIỀU KHIỂN QUẢN LÝ</h1>
+                            <p class="text-lg opacity-90">Tầm nhìn tổng quan về trung tâm Toán Cô Huyền.</p>
+                            <a href="#stats" class="inline-block mt-4 text-sm font-bold border-b-2 border-secondary-orange hover:text-secondary-orange transition duration-300">
+                                Xem thống kê chi tiết <i class="fas fa-arrow-down ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <h3 id="stats" class="text-3xl font-extrabold text-primary-blue mb-8 border-b-4 border-secondary-orange/30 pb-3">THỐNG KÊ HIỆN TẠI</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                        <div class="card p-8 bg-gradient-to-br from-primary-blue to-blue-600 text-white border-none shadow-2xl transition duration-300 hover:scale-[1.02]">
+                            <i class="fas fa-users text-5xl mb-4 opacity-70"></i>
+                            <p class="text-sm uppercase font-semibold opacity-90">Tổng Học Sinh</p>
+                            <p class="text-6xl font-extrabold mt-1">${students.length}</p>
+                        </div>
+                        <div onclick="app.renderFees()" class="card p-8 bg-gradient-to-br from-accent-green to-green-700 text-white border-none shadow-2xl cursor-pointer transition duration-300 hover:scale-[1.02]">
+                            <i class="fas fa-coins text-5xl mb-4 opacity-70"></i>
+                            <p class="text-sm uppercase font-semibold opacity-90">Doanh Thu Tạm Tính</p>
+                            <p class="text-4xl font-extrabold mt-1">${stats.totalRevenue.toLocaleString('vi-VN')}₫</p>
+                        </div>
+                        <div onclick="app.renderAttendance()" class="card p-8 bg-gradient-to-br from-secondary-orange to-orange-600 text-white border-none shadow-2xl cursor-pointer transition duration-300 hover:scale-[1.02]">
+                            <i class="fas fa-calendar-check text-5xl mb-4 opacity-70"></i>
+                            <p class="text-sm uppercase font-semibold opacity-90">Học Sinh Có Mặt Hôm Nay</p>
+                            <p class="text-6xl font-extrabold mt-1">${stats.todayAttendance}</p>
+                        </div>
+                    </div>
+
+                    <h3 class="text-3xl font-extrabold text-primary-blue mb-8 border-b-4 border-secondary-orange/30 pb-3">TRUY CẬP NHANH</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <button onclick="app.renderStudentList()" class="card flex flex-col items-center justify-center p-6 bg-light-bg hover:bg-blue-100 transition duration-300 shadow-md border-l-4 border-primary-blue">
+                            <i class="fas fa-user-friends text-5xl text-primary-blue mb-3"></i>
+                            <span class="font-bold text-lg">Quản Lý Học Sinh</span>
+                            <span class="text-sm text-gray-600">Thêm, sửa, xóa học sinh.</span>
+                        </button>
+                        <button onclick="app.renderAttendance()" class="card flex flex-col items-center justify-center p-6 bg-light-bg hover:bg-orange-100 transition duration-300 shadow-md border-l-4 border-secondary-orange">
+                            <i class="fas fa-clipboard-check text-5xl text-secondary-orange mb-3"></i>
+                            <span class="font-bold text-lg">Điểm Danh</span>
+                            <span class="text-sm text-gray-600">Ghi nhận buổi học hôm nay.</span>
+                        </button>
+                        <button onclick="app.renderFees()" class="card flex flex-col items-center justify-center p-6 bg-light-bg hover:bg-green-100 transition duration-300 shadow-md border-l-4 border-accent-green">
+                            <i class="fas fa-file-invoice-dollar text-5xl text-accent-green mb-3"></i>
+                            <span class="font-bold text-lg">Quản Lý Học Phí</span>
+                            <span class="text-sm text-gray-600">Theo dõi 10 buổi/đợt.</span>
+                        </button>
+                        <button onclick="app.renderReports()" class="card flex flex-col items-center justify-center p-6 bg-light-bg hover:bg-gray-200 transition duration-300 shadow-md border-l-4 border-gray-400">
+                            <i class="fas fa-chart-line text-5xl text-gray-500 mb-3"></i>
+                            <span class="font-bold text-lg">Báo Cáo Thống Kê</span>
+                            <span class="text-sm text-gray-600">Theo dõi tiến trình.</span>
+                        </button>
+                    </div>
+                `;
+            },
+
+            // ─── QUẢN LÝ HỌC SINH (có thể thêm/sửa/xóa) ───
+            renderStudentList(classFilter = 'all') { // Đã thêm tham số classFilter
+                let students = db.get('students').sort((a, b) => a.name.localeCompare(b.name, 'vi'));
+                
+                // Logic Lọc theo Lớp
+                if (classFilter !== 'all') {
+                    students = students.filter(s => s.classId === classFilter);
+                }
+
+                let classOptions = CLASSES.map(c => `<option value="${c}" ${c === classFilter ? 'selected' : ''}>Lớp ${c}</option>`).join('');
+
+                let rows = students.map((s, i) => `
+                    <tr id="student-${s.id}">
+                        <td class="text-center w-16">${i+1}</td>
+                        <td class="font-semibold text-primary-blue min-w-[150px]">${s.name}</td>
+                        <td class="text-gray-600 w-32">${s.phone || '<span class="italic text-red-400">Chưa có</span>'}</td>
+                        <td class="font-bold text-secondary-orange w-24">${s.classId}</td>
+                        <td class="text-center w-32">
+                            <button onclick="showEditStudentModal('${s.id}', '${s.name.replace(/'/g, "\\'")}', '${s.phone}', '${s.classId}')" class="text-white bg-primary-blue hover:bg-blue-700 text-sm px-3 py-1 rounded-lg transition mr-2"><i class="fas fa-edit"></i> Sửa</button>
+                            <button onclick="deleteStudent('${s.id}')" class="text-red-600 hover:text-red-800 text-lg"><i class="fas fa-trash-alt"></i></button>
+                        </td>
+                    </tr>
+                `).join('');
+                document.getElementById('mainContent').innerHTML = `
+                    <div class="card border-t-8 border-primary-blue">
+                        <h2 class="text-4xl font-extrabold text-primary-blue mb-8">DANH SÁCH HỌC SINH</h2>
+                        
+                        <div class="mb-6 p-4 bg-yellow-50 rounded-xl shadow-inner border border-yellow-200 flex items-center gap-4">
+                            <label for="classFilter" class="font-bold text-lg text-secondary-orange"><i class="fas fa-filter mr-2"></i> LỌC THEO LỚP:</label>
+                            <select id="classFilter" onchange="app.renderStudentList(this.value)" class="input-field !w-auto !py-2 !px-4 bg-white font-bold">
+                                <option value="all" ${classFilter === 'all' ? 'selected' : ''}>Tất cả các lớp</option>
+                                ${classOptions}
+                            </select>
+                            <span class="ml-auto font-bold text-primary-blue">Tìm thấy: <span class="text-secondary-orange">${students.length}</span> học sinh</span>
+                        </div>
+                        
+                        <div class="mb-8 p-4 bg-light-bg rounded-xl shadow-inner border border-gray-200">
+                            <h3 class="text-xl font-bold mb-4 text-secondary-orange">THÊM HỌC SINH MỚI</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
+                                <input id="newName" placeholder="Họ tên" class="input-field col-span-1 md:col-span-2">
+                                <input id="newPhone" placeholder="SĐT PH" class="input-field col-span-1">
+                                <select id="newClass" class="input-field col-span-1">${CLASSES.map(c => `<option value="${c}">${c}</option>`).join('')}</select>
+                                <button onclick="addStudent()" class="btn-secondary col-span-1 !py-3">THÊM</button>
+                            </div>
+                        </div>
+
+                        <div class="overflow-x-auto rounded-xl shadow-xl">
+                            <table class="responsive-table">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">STT</th>
+                                        <th>Họ Tên</th>
+                                        <th>SĐT PH</th>
+                                        <th>Lớp</th>
+                                        <th class="text-center">Hành Động</th>
+                                    </tr>
+                                </thead>
+                                <tbody>${rows ||
+                                '<tr><td colspan="5" class="text-center py-8 text-gray-500">Chưa có học sinh nào.</td></tr>'}</tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            },
+            
+            // ─── ĐIỂM DANH ───
+            renderAttendance() {
+                const today = new Date().toISOString().split('T')[0];
+                const students = db.get('students').sort((a, b) => a.name.localeCompare(b.name, 'vi'));
+                const att = db.get('attendance')[today] || {};
+                let totalPresent = Object.values(att).filter(x => x && x.status === 'present').length;
+                let rows = students.map((s, i) => {
+                    const status = att[s.id]?.status || 'absent';
+                    const note = att[s.id]?.note || '';
+                    const isPresent = status === 'present';
+                    return `
+                        <tr id="att-${s.id}">
+                            <td class="text-center w-16">${i+1}</td>
+                            <td class="font-bold ${isPresent ? 'text-primary-blue' : 'text-gray-600'}">${s.name} <span class="text-xs text-gray-500 font-normal ml-1">(${s.classId})</span></td>
+                            <td class="text-center w-28">
+                                <button onclick="toggleAttend('${s.id}', 'present')" class="text-sm font-bold w-full p-2 rounded-lg transition ${isPresent ? 'bg-accent-green text-white shadow-md' : 'bg-gray-200 text-gray-500 hover:bg-green-100'}">
+                                    <i class="fas fa-check"></i> Có mặt
+                                </button>
+                            </td>
+                            <td class="text-center w-28">
+                                <button onclick="toggleAttend('${s.id}', 'absent')" class="text-sm font-bold w-full p-2 rounded-lg transition ${!isPresent ?
+                                'bg-red-500 text-white shadow-md' : 'bg-gray-200 text-gray-500 hover:bg-red-100'}">
+                                    <i class="fas fa-times"></i> Vắng
+                                </button>
+                            </td>
+                            <td><input type="text" value="${note}" placeholder="Ghi chú (Ví dụ: Có phép, Bệnh)" class="input-field !p-2 !text-sm" onblur="saveNote('${s.id}', this.value)"></td>
+                        </tr>
+                    `;
+                }).join('');
+
+                document.getElementById('mainContent').innerHTML = `
+                    <div class="card border-t-8 border-secondary-orange">
+                        <h2 class="text-4xl font-extrabold text-primary-blue mb-2">QUẢN LÝ ĐIỂM DANH</h2>
+                        <h3 class="text-2xl font-bold text-secondary-orange mb-6">Ngày: ${new Date().toLocaleDateString('vi-VN')}</h3>
+                        <div class="overflow-x-auto rounded-xl shadow-xl">
+                            <table class="responsive-table">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">STT</th>
+                                        <th>Họ Tên</th>
+                                        <th class="text-center">Tình Trạng (Chọn)</th>
+                                        <th class="text-center"></th>
+                                        <th>Ghi chú</th>
+                                    </tr>
+                                </thead>
+                                <tbody>${rows ||
+                                '<tr><td colspan="5" class="text-center py-8 text-gray-500">Chưa có học sinh nào để điểm danh.</td></tr>'}</tbody>
+                            </table>
+                        </div>
+                        <div class="mt-8 flex justify-between items-center bg-primary-blue text-white p-4 rounded-xl shadow-lg">
+                            <p class="text-xl font-bold">TỔNG KẾT HÔM NAY:</p>
+                            <p class="text-3xl font-extrabold text-secondary-orange">${totalPresent} / ${students.length} học sinh Có mặt</p>
+                        </div>
+                    </div>
+                `;
+            },
+            
+            // ─── QUẢN LÝ HỌC PHÍ ───
+            renderFees() {
+                const students = db.get('students').sort((a, b) => a.name.localeCompare(b.name, 'vi'));
+                const fees = db.get('fees');
+                const cost = CONFIG.FEE_PER_SESSION;
+
+                let rows = students.map(s => {
+                    const data = fees[s.id]?.current || { paid: 0, remaining: 0 };
+                    const paidAmount = data.paid * cost;
+                    const maxPaid = CONFIG.SESSIONS_PER_COURSE;
+                    const feeStatus = data.paid >= maxPaid ? 
+                        '<span class="text-accent-green font-extrabold">Đủ 10 buổi</span>' : 
+                        `<span class="text-red-500 font-extrabold">Thiếu ${maxPaid - data.paid} buổi</span>`;
+
+                    return `
+                        <tr>
+                            <td class="font-bold text-gray-800 min-w-[150px]">${s.name} <span class="text-xs text-gray-500 block font-normal">Lớp ${s.classId}</span></td>
+                            <td class="text-center font-extrabold text-2xl">${data.paid} / ${maxPaid}</td>
+                            <td class="text-right font-bold text-accent-green">${paidAmount.toLocaleString('vi-VN')}₫</td>
+                            <td class="text-right">
+                                ${data.remaining > 0 ?
+                                `<span class="bg-secondary-orange/10 text-secondary-orange font-bold px-3 py-1 rounded-full">Dư ${(data.remaining/1000).toLocaleString('vi-VN')}k</span>` : '<span class="text-gray-400 italic">Không dư</span>'}
+                            </td>
+                            <td class="text-center">
+                                <button onclick="adjustFee('${s.id}', 1)" class="text-white bg-accent-green hover:bg-green-700 text-sm px-3 py-1 rounded-lg transition mr-2"><i class="fas fa-plus"></i></button>
+                                <button onclick="adjustFee('${s.id}', -1)" class="text-white bg-red-500 hover:bg-red-700 text-sm px-3 py-1 rounded-lg transition"><i class="fas fa-minus"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+
+                document.getElementById('mainContent').innerHTML = `
+                    <div class="card border-t-8 border-accent-green">
+                        <h2 class="text-4xl font-extrabold text-primary-blue mb-4">QUẢN LÝ HỌC PHÍ</h2>
+                        <p class="text-lg text-gray-700 mb-6 font-semibold">
+                            Học phí: <span class="text-accent-green">${cost.toLocaleString('vi-VN')}₫/buổi</span>.
+                            Mỗi đợt: <span class="text-primary-blue">${CONFIG.SESSIONS_PER_COURSE} buổi</span> (Tổng: ${(cost * CONFIG.SESSIONS_PER_COURSE).toLocaleString('vi-VN')}₫).
+                        </p>
+                        <div class="overflow-x-auto rounded-xl shadow-xl">
+                            <table class="responsive-table">
+                                <thead>
+                                    <tr>
+                                        <th>Học sinh</th>
+                                        <th class="text-center">Số Buổi Đã Đóng</th>
+                                        <th class="text-right">Tổng Tiền Đã Thu</th>
+                                        <th class="text-right">Tiền Dư</th>
+                                        <th class="text-center">Điều Chỉnh</th>
+                                    </tr>
+                                </thead>
+                                <tbody>${rows ||
+                                '<tr><td colspan="5" class="text-center py-8 text-gray-500">Chưa có học sinh nào để quản lý học phí.</td></tr>'}</tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            },
+            
+            // ─── BÁO CÁO THỐNG KÊ ───
+            renderReports() {
+                const students = db.get('students');
+                const attendance = db.get('attendance');
+                const cost = CONFIG.FEE_PER_SESSION;
+                
+                // 1. Calculate Total Sessions & Revenue
+                let totalPresentSessions = 0;
+                // Group sessions by class ID
+                const sessionsByClass = {}; 
+                CLASSES.forEach(c => sessionsByClass[c] = 0); // Initialize all classes 
+
+                for (const day in attendance) {
+                    const dailyAtt = attendance[day];
+                    for (const studentId in dailyAtt) {
+                        if (dailyAtt[studentId].status === 'present') {
+                            totalPresentSessions++;
+                            
+                            // Find student to get classId
+                            const student = students.find(s => s.id === studentId);
+                            if (student) {
+                                sessionsByClass[student.classId] = (sessionsByClass[student.classId] || 0) + 1;
+                            }
+                        }
+                    }
+                }
+                
+                const totalRevenueBasedOnAttendance = totalPresentSessions * cost;
+
+                // 2. Prepare Class Report Table
+                const classReportRows = Object.entries(sessionsByClass)
+                    .sort(([classA], [classB]) => classA.localeCompare(classB))
+                    .map(([classId, count]) => `
+                        <tr>
+                            <td class="font-bold text-primary-blue">${classId}</td>
+                            <td class="text-center font-extrabold text-2xl text-secondary-orange">${count}</td>
+                            <td class="text-right font-bold text-accent-green">${(count * cost).toLocaleString('vi-VN')}₫</td>
+                        </tr>
+                    `).join('');
+
+
+                document.getElementById('mainContent').innerHTML = `
+                    <div class="card border-t-8 border-gray-400">
+                        <h2 class="text-4xl font-extrabold text-primary-blue mb-4">BÁO CÁO THỐNG KÊ</h2>
+                        <p class="text-lg text-gray-700 mb-8 font-semibold">Phân tích tiến trình dựa trên số buổi học đã diễn ra và doanh thu tương ứng.</p>
+
+                        <h3 class="text-2xl font-extrabold text-primary-blue mb-4 border-b pb-2">TỔNG QUAN TIẾN TRÌNH</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+                            <div class="card p-6 bg-blue-50 border-blue-200">
+                                <p class="text-sm uppercase font-semibold text-primary-blue">Tổng Buổi Học Đã Điểm Danh (Có mặt)</p>
+                                <p class="text-5xl font-extrabold mt-1 text-primary-blue">${totalPresentSessions}</p>
+                            </div>
+                            <div class="card p-6 bg-green-50 border-green-200">
+                                <p class="text-sm uppercase font-semibold text-accent-green">Doanh Thu Tạm Tính Theo Buổi Học</p>
+                                <p class="text-3xl font-extrabold mt-1 text-accent-green">${totalRevenueBasedOnAttendance.toLocaleString('vi-VN')}₫</p>
+                                <p class="text-xs text-gray-500 mt-2">Tính theo ${cost.toLocaleString('vi-VN')}₫/buổi.</p>
+                            </div>
+                        </div>
+
+                        <h3 class="text-2xl font-extrabold text-primary-blue mb-4 border-b pb-2">SỐ BUỔI THEO LỚP</h3>
+                        <div class="overflow-x-auto rounded-xl shadow-xl">
+                            <table class="responsive-table">
+                                <thead>
+                                    <tr>
+                                        <th>Lớp</th>
+                                        <th class="text-center">Tổng Buổi Học</th>
+                                        <th class="text-right">Doanh Thu Tạm Tính</th>
+                                    </tr>
+                                </thead>
+                                <tbody>${classReportRows || '<tr><td colspan="3" class="text-center py-8 text-gray-500">Chưa có dữ liệu điểm danh.</td></tr>'}</tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            },
+            
+            // ----------------------------------------
+            // 4. HELPER LOGIC
+            // ----------------------------------------
+            calculateDashboardStats() {
+                const fees = db.get('fees');
+                let totalRevenue = 0;
+                Object.values(fees).forEach(sFee => {
+                    if (sFee.current) totalRevenue += sFee.current.paid * CONFIG.FEE_PER_SESSION;
+                    totalRevenue += sFee.current?.remaining || 0; // Add remaining money if any
+                });
+                const today = new Date().toISOString().split('T')[0];
+                const att = db.get('attendance')[today] || {};
+                const todayAttendance = Object.values(att).filter(x => x && x.status === 'present').length;
+
+                return { totalRevenue, todayAttendance };
+            }
+        };
+
+        // ----------------------------------------
+        // 5. GLOBAL FUNCTIONS
+        // ----------------------------------------
+
+        function handleLogin() {
+            const u = document.getElementById('user').value;
+            const p = document.getElementById('pass').value;
+            if (!auth.login(u, p)) {
+                 document.getElementById('modalContainer').innerHTML = `
+                    <div class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-70 flex items-center justify-center z-[1001]" onclick="this.remove()">
+                        <div class="bg-white p-8 rounded-xl text-center shadow-2xl" onclick="event.stopPropagation()">
+                            <i class="fas fa-exclamation-triangle text-red-500 text-4xl mb-3"></i>
+                            <h4 class="text-xl font-bold text-gray-800">Đăng nhập thất bại!</h4>
+                            <p class="text-gray-600 mt-2">Sai Tài khoản hoặc Mật khẩu.</p>
+                            <button onclick="document.getElementById('modalContainer').innerHTML = ''" class="mt-4 bg-primary-blue text-white py-2 px-4 rounded-lg hover:bg-blue-700">Đóng</button>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function addStudent() {
+            const name = document.getElementById('newName').value.trim();
+            const phone = document.getElementById('newPhone').value.trim();
+            const classId = document.getElementById('newClass').value;
+            if (!name) return alert('Vui lòng nhập tên học sinh.');
+            const students = db.get('students');
+            
+            // Generate simple unique ID
+            const newId = `s_${Date.now()}`;
+            students.push({ id: newId, name, phone, classId });
+            db.set('students', students);
+            
+            // Clear inputs
+            document.getElementById('newName').value = '';
+            document.getElementById('newPhone').value = '';
+
+            app.renderStudentList();
+        }
+
+        function deleteStudent(id) {
+            if (confirm('Xóa học sinh này? Hành động này không thể hoàn tác.')) {
+                let students = db.get('students');
+                students = students.filter(x => x.id !== id);
+                db.set('students', students);
+                
+                // Also clean up fee and attendance data
+                const fees = db.get('fees');
+                delete fees[id];
+                db.set('fees', fees);
+                
+                app.renderStudentList();
+            }
+        }
+        
+        function showEditStudentModal(id, name, phone, classId) {
+            const classOptions = CLASSES.map(c => `<option value="${c}" ${c === classId ? 'selected' : ''}>Lớp ${c}</option>`).join('');
+            document.getElementById('modalContainer').innerHTML = `
+                <div class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-70 flex items-center justify-center z-[1001]" onclick="this.remove()">
+                    <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-lg transform scale-95 transition-transform duration-300" onclick="event.stopPropagation()">
+                        <h3 class="text-2xl font-bold text-primary-blue mb-6 border-b pb-2"><i class="fas fa-user-edit mr-2"></i> Sửa Thông Tin Học Sinh</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700">Họ Tên</label>
+                                <input type="text" id="editName" class="input-field" value="${name}">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700">Số Điện Thoại PH</label>
+                                <input type="text" id="editPhone" class="input-field" value="${phone}">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700">Lớp</label>
+                                <select id="editClassId" class="input-field">${classOptions}</select>
+                            </div>
+                            <button onclick="saveStudentEdit('${id}')" class="w-full btn-primary !py-3">Lưu Thay Đổi</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function saveStudentEdit(id) {
+            const name = document.getElementById('editName').value.trim();
+            const phone = document.getElementById('editPhone').value.trim();
+            const classId = document.getElementById('editClassId').value;
+            
+            if (!name) return alert('Tên không được để trống!');
+            
+            let students = db.get('students');
+            const userIndex = students.findIndex(u => u.id === id);
+            
+            if (userIndex !== -1) {
+                students[userIndex].name = name;
+                students[userIndex].phone = phone;
+                students[userIndex].classId = classId;
+                db.set('students', students);
+                
+                document.getElementById('modalContainer').innerHTML = ''; // Close modal
+                app.renderStudentList();
+            } else {
+                alert('Không tìm thấy học sinh!');
+            }
+        }
+
+
+        function toggleAttend(id, status) {
+            const day = new Date().toISOString().split('T')[0];
+            const att = db.get('attendance');
+            if (!att[day]) att[day] = {};
+
+            // Preserve note if exists
+            const note = att[day][id]?.note || '';
+            
+            att[day][id] = { status: status, note: note };
+            
+            db.set('attendance', att);
+            app.renderAttendance(); // Re-render to update UI and total count
+        }
+
+        function saveNote(id, note) {
+            const day = new Date().toISOString().split('T')[0];
+            const att = db.get('attendance');
+            if (!att[day]) att[day] = {};
+            
+            // If the record doesn't exist, create it with default 'absent' status
+            if (!att[day][id]) att[day][id] = { status: 'absent' };
+            att[day][id].note = note.trim();
+            db.set('attendance', att);
+            // No need to re-render the whole page, only updating the note
+        }
+
+        function adjustFee(studentId, change) {
+            const fees = db.get('fees');
+            // Ensure fee object exists and has current/history structure
+            if (!fees[studentId]) fees[studentId] = { current: { paid: 0, remaining: 0 }, history: [] }; 
+            if (!fees[studentId].current) fees[studentId].current = { paid: 0, remaining: 0 };
+            if (!fees[studentId].history) fees[studentId].history = []; // Ensure history array exists
+
+            let current = fees[studentId].current;
+            let paidBefore = current.paid;
+            const today = new Date().toISOString().split('T')[0];
+            
+            let newPaid = current.paid + change;
+            const maxPaid = CONFIG.SESSIONS_PER_COURSE; 
+            const feeValue = CONFIG.FEE_PER_SESSION;
+
+            if (change === 1) {
+                // Add session: prioritize using remaining money first, then increase paid sessions
+                if (current.remaining >= feeValue) {
+                    current.remaining -= feeValue;
+                    current.paid++;
+                } else {
+                    current.paid++;
+                }
+                
+                // If paid sessions exceed maxPaid, it means the user paid for more than 10 sessions.
+                if (current.paid > maxPaid) {
+                    current.paid = maxPaid;
+                    current.remaining += feeValue;
+                    alert(`Đã đủ ${maxPaid} buổi. Buổi này được tính vào tiền dư: +${feeValue.toLocaleString('vi-VN')}₫`);
+                }
+
+            } else if (change === -1) {
+                // Subtract session: decrease paid session count
+                if (current.paid > 0) {
+                    current.paid--;
+                } else if (current.remaining >= feeValue) {
+                     current.remaining -= feeValue;
+                    alert(`Số buổi đã đóng = 0. Đã giảm tiền dư: -${feeValue.toLocaleString('vi-VN')}₫`);
+                } else {
+                    alert('Không thể giảm thêm (Số buổi = 0 và Tiền dư < 80k).');
+                    return;
+                }
+            }
+            
+            // Log the fee adjustment to history, fulfilling the "date" request based on session changes
+            fees[studentId].history.push({
+                date: today,
+                change: change,
+                paidBefore: paidBefore,
+                paidAfter: current.paid,
+                remainingAfter: current.remaining,
+                reason: change > 0 ? 'Thêm 1 buổi' : 'Giảm 1 buổi'
+            });
+
+            db.set('fees', fees);
+            app.renderFees();
+        }
+
+
+        // Khởi động
+        app.init();
+    </script>
+</body>
+</html>
